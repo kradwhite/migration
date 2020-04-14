@@ -84,7 +84,7 @@ class App
         try {
             return DriverFactory::buildFromArray($this->config()->getDriver(), $this->config()->getEnvironment());
         } catch (BeforeQueryException $e) {
-            throw new MigrationException("Ошибка создания драйвера: " . $e->getMessage(), 0, $e);
+            throw new MigrationException("Ошибка создания драйвера. " . $e->getMessage(), $e->getCode(), $e);
         }
     }
 }
