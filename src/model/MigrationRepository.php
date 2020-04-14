@@ -71,7 +71,7 @@ class MigrationRepository
             foreach ($raw as &$migration) {
                 $attributes[$migration['name']] = $migration;
             }
-            return new Migrations($attributes, $this->config, $this);
+            return new Migrations($attributes, $this);
         } catch (DbException $e) {
             throw new MigrationException($e->getMessage(), $e->getCode(), $e);
         }
@@ -79,16 +79,35 @@ class MigrationRepository
 
     /**
      * @param array $attributes
-     * @return void
+     * @return int
      * @throws MigrationException
      */
-    public function add(array $attributes)
+    public function add(array $attributes): int
     {
         try {
-            $this->connection->insert($this->config->getMigrationTable(), $attributes)->prepareExecute();
+            return (int)$this->connection->insert($this->config->getMigrationTable(), $attributes)->prepareExecute();
         } catch (DbException $e) {
             throw new MigrationException($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @param string $className
+     * @param string $content
+     * @return string
+     * @throws MigrationException
+     */
+    public function createFile(string $className, string $content): string
+    {
+        $fileName = $this->config->getPath() . "/$className.php";
+        if (file_exists($fileName)) {
+            throw new MigrationException("Миграция с именем '$fileName' уже существует");
+        } else if (!file_put_contents($fileName, $content)) {
+            throw new MigrationException("Ошибка создания файла '$fileName'");
+        } else if (!chmod($fileName, 0664)) {
+            throw new MigrationException("Ошибка установки доступов 0664 на файл '$fileName'");
+        }
+        return $fileName;
     }
 
     /**
@@ -105,10 +124,49 @@ class MigrationRepository
         }
     }
 
+    /**
+     * @param string $className
+     * @return Migration
+     * @throws MigrationException
+     */
+    public function buildMigration(string $className): Migration
+    {
+        require $this->config->getPath() . "/$className.php";
+        if (!class_exists($className)) {
+            throw new MigrationException("Не найден класс '$className' миграции");
+        } else if (!is_a($className, Migration::class)) {
+            throw new MigrationException("Миграция должна быть унаследована от 'kradwhite\migration\Migration::class");
+        }
+        return new $className($this->connection);
+    }
+
+    /**
+     * @return array
+     * @throws MigrationException
+     */
+    public function loadMigrationNamesFromDirectory(): array
+    {
+        $dirname = $this->config->getPath();
+        if (!file_exists($dirname)) {
+            throw new MigrationException("Каталог с миграциями '$dirname' не найден");
+        } else if (!is_dir($dirname)) {
+            throw new MigrationException("Файл с имененм '$dirname' не является каталогом");
+        }
+        $filenames = scandir($dirname,);
+        if ($filenames === false) {
+            throw new MigrationException("Ошибка получения файлов из каталога '$dirname'");
+        }
+        $result = [];
+        foreach ($filenames as &$filename) {
+            if (preg_match(`_\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}__[A-Za-z_]{1,}.php`, $filename)) {
+                $result[] = substr($filename, 0, -4);
+            }
+        }
+        return $result;
+    }
 
     public function begin()
     {
-
         $this->connection->begin();
     }
 

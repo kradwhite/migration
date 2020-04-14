@@ -9,6 +9,8 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\model;
 
+use DateTime;
+
 /**
  * Class Migrations
  * @package kradwhite\migration\model
@@ -18,22 +20,17 @@ class Migrations
     /** @var array */
     private array $migrations = [];
 
-    /** @var Config */
-    private ?Config $config = null;
-
     /** @var MigrationRepository */
-    private ?MigrationRepository $repository;
+    private ?MigrationRepository $repository = null;
 
     /**
      * Migrations constructor.
      * @param array $migrations
-     * @param Config $config
      * @param MigrationRepository $repository
      */
-    public function __construct(array $migrations, Config $config, MigrationRepository $repository)
+    public function __construct(array $migrations, MigrationRepository $repository)
     {
         $this->migrations = $migrations;
-        $this->config = $config;
         $this->repository = $repository;
     }
 
@@ -47,12 +44,35 @@ class Migrations
     }
 
     /**
+     * @param string $suffixName
+     * @return string
+     * @throws MigrationException
+     */
+    public function createMigration(string $suffixName): string
+    {
+        $className = date("_Y_m_d__H_i_s__") . $suffixName;
+        return $this->repository->createFile($className, $this->getMigrationTemplate($className));
+    }
+
+    /**
      * @param int $count
      * @return void
+     * @throws MigrationException
      */
     public function migrate(int $count)
     {
-
+        $newMigrations = [];
+        foreach ($this->repository->loadMigrationNamesFromDirectory() as &$class) {
+            if (!array_key_exists($class, $this->migrations)) {
+                $newMigrations[$class] = ['name' => $class, 'date' => $this->obtainDateFromClass($class)];
+                $newMigrations[$class]['id'] = $this->repository->add($newMigrations[$class]);
+                $this->repository->buildMigration($class)->up();
+                if (!--$count) {
+                    break;
+                }
+            }
+        }
+        sort($this->migrations = array_merge($this->migrations, $newMigrations));
     }
 
     /**
@@ -64,6 +84,7 @@ class Migrations
     {
         while ($count--) {
             $migration = array_pop($this->migrations);
+            $this->repository->buildMigration($migration['name'])->down();
             $this->repository->removeById($migration['id']);
         }
     }
@@ -84,7 +105,7 @@ class Migrations
         if (!$candidatesKeys) {
             throw new MigrationException("Миграция, содержащая в имени '$name', не найдена");
         }
-        return $this->removeById($candidatesKeys);
+        return $this->rollbackAndRemove($candidatesKeys);
     }
 
     /**
@@ -96,6 +117,7 @@ class Migrations
     {
         foreach ($this->migrations as $key => &$migration) {
             if ($migration['id'] == $id) {
+                $this->repository->buildMigration($migration['name'])->down();
                 $this->repository->removeById($id);
                 unset($this->migrations[$key]);
             }
@@ -119,7 +141,7 @@ class Migrations
         if (!$candidatesKeys) {
             throw new MigrationException("Миграция, содержащая в дате '$datetime', не найдена");
         }
-        return $this->removeById($candidatesKeys);
+        return $this->rollbackAndRemove($candidatesKeys);
     }
 
     /**
@@ -127,36 +149,61 @@ class Migrations
      * @return array
      * @throws MigrationException
      */
-    private function removeById(array $candidatesKeys): array
+    private function rollbackAndRemove(array $candidatesKeys): array
     {
         if (count($candidatesKeys) > 1) {
             return $candidatesKeys;
         }
-        $this->repository->removeById($this->migrations[$candidatesKeys[0]]);
+        $this->repository->buildMigration($this->migrations[$candidatesKeys[0]]['name'])->down();
+        $this->repository->removeById($this->migrations[$candidatesKeys[0]]['id']);
         unset($this->migrations[$this->migrations[$candidatesKeys[0]]]);
         return [];
     }
 
     /**
-     * @return array
-     * @throws MigrationException
+     * @param string $class
+     * @return string
      */
-    private function getMigrationNamesForDirectory(): array
+    private function obtainDateFromClass(string $class): string
     {
-        $dirname = $this->config->getPath();
-        if (!file_exists($dirname)) {
-            throw new MigrationException("Каталог с миграциями '$dirname' не найден");
-        } else if (!is_dir($dirname)) {
-            throw new MigrationException("Файл с имененм '$dirname' не является каталогом");
-        }
-        $filenames = scandir($dirname,);
-        if ($filenames === false) {
-            throw new MigrationException("Ошибка получения файлов из каталога '$dirname'");
-        }
-        $result = [];
-        foreach ($filenames as &$filename) {
-            
-        }
-        return $result;
+        return DateTime::createFromFormat("Y_m_d__H_i_s", substr($class, 1, 21))->format("Y-m-d H:i:s");
+    }
+
+    /**
+     * @param string $className
+     * @return string
+     */
+    private function getMigrationTemplate(string $className): string
+    {
+        return <<<content
+<?php
+
+use kradwhite\migration\model\Migration;
+
+/**
+ * Class $className
+ * @method conn(): Connection
+ * @method table(): Table
+ */
+class $className extends Migration
+{
+    
+    /**
+     * @return void
+     */
+    public function up(): void
+    {
+        //\$table()->create();
+    }
+    
+    /**
+     * @return void
+     */
+    public function down(): void
+    {
+        //\$table()->drop();
+    }
+}
+content;
     }
 }
