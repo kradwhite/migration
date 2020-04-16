@@ -9,14 +9,14 @@ declare (strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use kradwhite\migration\command\CreateConfigCommand;
+use kradwhite\migration\command\ConfigCommand;
 use kradwhite\migration\command\InitMigrationsTableCommand;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
 
 $application->addCommands([
-    new CreateConfigCommand(),
+    new ConfigCommand(),
     new InitMigrationsTableCommand(),
     new MigrateCommand(),
     new RollbackCommand(),

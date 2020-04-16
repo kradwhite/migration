@@ -18,10 +18,10 @@ use DateTime;
 class Migrations
 {
     /** @var array */
-    private array $migrations = [];
+    private array $migrations;
 
     /** @var MigrationRepository */
-    private ?MigrationRepository $repository = null;
+    private ?MigrationRepository $repository;
 
     /**
      * Migrations constructor.
@@ -72,7 +72,8 @@ class Migrations
                 }
             }
         }
-        sort($this->migrations = array_merge($this->migrations, $newMigrations));
+        $this->migrations = array_merge($this->migrations, $newMigrations);
+        sort($this->migrations);
     }
 
     /**

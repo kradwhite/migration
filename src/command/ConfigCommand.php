@@ -9,7 +9,8 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\command;
 
-use kradwhite\migration\MigrationException;
+use kradwhite\migration\model\App;
+use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -18,7 +19,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class CreateConfigCommand
  * @package kradwhite\migration\command
  */
-class CreateConfigCommand extends Command
+class ConfigCommand extends Command
 {
     /** @var string */
     protected static $defaultName = 'config';
@@ -41,7 +42,6 @@ class CreateConfigCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $source = $this->getTemplateConfigFileName();
         if (!$target = $this->getConfigFileName($input)) {
             $output->writeln('<fg=red>Ошика получения рабочего каталога. Возмножно нехватает доступа на чтение у одно из каталогов в цепочке.</>');
         } else if (file_exists($target)) {
