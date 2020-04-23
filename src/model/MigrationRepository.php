@@ -36,27 +36,24 @@ class MigrationRepository
     }
 
     /**
-     * @return void
+     * @return string
      * @throws MigrationException
+     * @throws DbException
      */
-    public function createTable()
+    public function createTable(): string
     {
-        try {
-            $this->connection->begin();
-            $this->connection->table($this->config->getMigrationTable())
-                ->addColumn('id', 'bigauto', ['null' => false])
-                ->addColumn('date', 'datetime', ['null' => false])
-                ->addColumn('name', 'string', ['null' => false, 'limit' => 256])
-                ->primaryKey('id')
-                ->addIndex(['date'])
-                ->addIndex(['name'], ['unique' => true])
-                ->create();
-            $this->connection->table($this->config->getMigrationTable())->insert(['date' => date("Y-m-d H:i:s"), 'name' => 'init']);
-            $this->connection->commit();
-        } catch (DbException $e) {
-            $this->connection->rollback();
-            throw new MigrationException($e->getMessage(), $e->getCode(), $e);
-        }
+        $this->connection->begin();
+        $this->connection->table($this->config->getMigrationTable())
+            ->addColumn('id', 'bigauto', ['null' => false])
+            ->addColumn('date', 'datetime', ['null' => false])
+            ->addColumn('name', 'string', ['null' => false, 'limit' => 256])
+            ->primaryKey('id')
+            ->addIndex(['date'])
+            ->addIndex(['name'], ['unique' => true])
+            ->create();
+        $this->connection->table($this->config->getMigrationTable())->insert(['date' => date("Y-m-d H:i:s"), 'name' => 'init']);
+        $this->connection->commit();
+        return $this->config->getMigrationTable();
     }
 
     /**

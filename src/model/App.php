@@ -25,13 +25,12 @@ class App
 
     /**
      * App constructor.
-     * @param array $config
-     * @param string $environment
+     * @param string $configFilename
      * @throws MigrationException
      */
-    public function __construct(array $config, string $environment)
+    public function __construct(string $configFilename)
     {
-        $this->objects[Config::class] = new Config($config, $environment);
+        $this->objects[Config::class] = $this->buildConfig($configFilename);
     }
 
     /**
@@ -55,7 +54,7 @@ class App
      * @return Connection
      * @throws MigrationException
      */
-    private function connection(): Connection
+    public function connection(): Connection
     {
         if (!isset($this->objects[Connection::class])) {
             $this->objects[Connection::class] = new Connection($this->getDriver());
@@ -86,5 +85,21 @@ class App
         } catch (BeforeQueryException $e) {
             throw new MigrationException("Ошибка создания драйвера. " . $e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    /**
+     * @param string $filename
+     * @return Config
+     * @throws MigrationException
+     */
+    private function buildConfig(string $filename): Config
+    {
+        if (!file_exists($filename)) {
+            $filename = __DIR__ . '/../' . Config::Name;
+        }
+        if (!$config = yaml_parse_file($filename)) {
+            throw new MigrationException("Неверный формат данных в файле конфигурации '$filename'");
+        }
+        return new Config($config, $config['defaults']['environment']);
     }
 }

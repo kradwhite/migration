@@ -29,10 +29,10 @@ class ConfigCommand extends Command
      */
     protected function configure(): void
     {
-        $this->setDescription('<fg=green>Создание конфиг файла миграций...</>')
-            ->setHelp('<fg=green>Создаёт файл конфигурации для миграций.</>')
+        $this->setDescription('<fg=green>Создание файла конфигурации миграций</>')
+            ->setHelp('<fg=green>Создаёт файл конфигурации миграций</>')
             ->addOption('path', null, InputOption::VALUE_OPTIONAL,
-                '<fg=green>Путь хранения конфиг файла миграций</>');
+                '<fg=green>Путь хранения файла конфигурации миграций</>');
     }
 
     /**
@@ -42,16 +42,14 @@ class ConfigCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        if (!$target = $this->getConfigFileName($input)) {
-            $output->writeln('<fg=red>Ошика получения рабочего каталога. Возмножно нехватает доступа на чтение у одно из каталогов в цепочке.</>');
-        } else if (file_exists($target)) {
-            $output->writeln("<fg=red>Файл конфигурации '$target' уже существует...</>");
-        } else if (!copy($source, $target)) {
-            $output->writeln("<fg=red>Ошибка копирования файла конфигурации '$target'...</>");
-        } else if (!chmod($target, '0664')) {
-            $output->writeln("<fg=red>Ошибка установки прав 0664 на файл конфигурации '$target'</>");
-        } else {
-            $output->writeln("<fg=green>Файл конфигурации '$target' миграци успешно создан!</>");
+        try {
+            if ($app = $this->buildApp($input, $output)) {
+                $filename = $app->config()->create();
+                $output->writeln($filename);
+                $output->writeln("Успешно создан");
+            }
+        } catch (MigrationException $e) {
+            $output->writeln("<fg=red>{$e->getMessage()}");
         }
         return 0;
     }

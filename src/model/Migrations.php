@@ -10,6 +10,7 @@ declare (strict_types=1);
 namespace kradwhite\migration\model;
 
 use DateTime;
+use kradwhite\db\exception\DbException;
 
 /**
  * Class Migrations
@@ -35,12 +36,13 @@ class Migrations
     }
 
     /**
-     * @return void
+     * @return string
      * @throws MigrationException
+     * @throws DbException
      */
-    public function create()
+    public function create(): string
     {
-        $this->repository->createTable();
+        return $this->repository->createTable();
     }
 
     /**
@@ -61,6 +63,9 @@ class Migrations
      */
     public function migrate(int $count)
     {
+        if (!$count) {
+            $count = count($this->migrations);
+        }
         $newMigrations = [];
         foreach ($this->repository->loadMigrationNamesFromDirectory() as &$class) {
             if (!array_key_exists($class, $this->migrations)) {
@@ -83,6 +88,9 @@ class Migrations
      */
     public function rollback(int $count)
     {
+        if (!$count) {
+            $count = count($this->migrations);
+        }
         while ($count--) {
             $migration = array_pop($this->migrations);
             $this->repository->buildMigration($migration['name'])->down();

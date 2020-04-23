@@ -16,7 +16,7 @@ namespace kradwhite\migration\model;
 class Config
 {
     /** @var string */
-    const Name = 'migration.yml';
+    const Name = 'migrations.yml';
 
     /** @var array */
     private array $config = [];
@@ -43,10 +43,10 @@ class Config
     }
 
     /**
-     * @return void
+     * @return string
      * @throws MigrationException
      */
-    public function create()
+    public function create(): string
     {
         $name = $this->getWorkPath() . DIRECTORY_SEPARATOR . self::Name;
         if (file_exists($name)) {
@@ -54,6 +54,7 @@ class Config
         } else if (!yaml_emit_file($name, $this->config)) {
             throw new MigrationException("Ошибка создания файла конфигурации '$name'");
         }
+        return $name;
     }
 
     /**
