@@ -19,17 +19,17 @@ use kradwhite\db\exception\DbException;
 class MigrationRepository
 {
     /** @var Connection */
-    private ?Connection $connection = null;
+    private Connection $connection;
 
     /** @var Config */
-    private ?Config $config = null;
+    private Config $config;
 
     /**
      * MigrationRepository constructor.
-     * @param Connection|null $connection
-     * @param Config|null $config
+     * @param Connection $connection
+     * @param Config $config
      */
-    public function __construct(?Connection $connection, ?Config $config)
+    public function __construct(Connection $connection, Config $config)
     {
         $this->connection = $connection;
         $this->config = $config;
@@ -160,20 +160,5 @@ class MigrationRepository
             }
         }
         return $result;
-    }
-
-    public function begin()
-    {
-        $this->connection->begin();
-    }
-
-    public function commit()
-    {
-        $this->connection->commit();
-    }
-
-    public function rollback()
-    {
-        $this->connection->rollback();
     }
 }

@@ -9,7 +9,7 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\command;
 
-use kradwhite\db\exception\PdoException;
+use kradwhite\db\exception\DbException;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -29,10 +29,9 @@ class TableCommand extends Command
      */
     protected function configure()
     {
+        parent::configure();
         $this->setDescription('<fg=green>Создание таблицы для хранения миграций.</>')
             ->setHelp('<fg=green>Создаёт таблицу для хранения миграций.</>')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
-                '<fg=green>Устанавливает каталог с файлом конфигурации.</>')
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
                 '<fg=green>Устанавливает environment с настройками базы данных.</>');
     }
@@ -40,17 +39,14 @@ class TableCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int
+     * @return void
      * @throws MigrationException
-     * @throws PdoException
+     * @throws DbException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function doExecute(InputInterface $input, OutputInterface $output)
     {
-        $this->transactionExecute(function () use ($input, $output) {
-            if ($app = $this->buildApp($input, $output)) {
-                $app->migrations()->create();
-            }
-        }, $output);
-        return 0;
+        if ($app = $this->buildApp($input, $output)) {
+            $app->migrations()->create();
+        }
     }
 }

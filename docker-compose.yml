@@ -1,0 +1,24 @@
+version: '3'
+services:
+  php:
+    build: ./docker/php
+    volumes:
+      - ./src:/var/www
+    links:
+      - mysql
+  mysql:
+    image: mysql
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./docker/mysql/:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+  pgsql:
+    image: postgresql
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./docker/pgsql:/var/lib/postgresql
+    environment:
+      PGSQL_ROOT_PASSWORD: root

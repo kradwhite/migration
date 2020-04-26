@@ -7,10 +7,8 @@
 
 declare (strict_types=1);
 
-namespace command;
+namespace kradwhite\migration\command;
 
-use kradwhite\db\exception\PdoException;
-use kradwhite\migration\command\Command;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -27,28 +25,23 @@ class MigrateCommand extends Command
      */
     protected function configure()
     {
+        parent::configure();
         $this->setDescription("<fg=green>Применение миграций</>")
             ->setHelp('<fg=green>Запускает выполение миграций</>')
-            ->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
-                '<fg=green>Устанавливает каталог с файлом конфигурации.</>')
             ->addOption('count', 'c', InputOption::VALUE_OPTIONAL,
-                '<fg=green>Колличество миграция, которые будут выполены');
+                '<fg=green>Колличество миграция, которые будут выполены</>');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int
-     * @throws PdoException
+     * @return void
      * @throws MigrationException
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function doExecute(InputInterface $input, OutputInterface $output)
     {
-        $this->transactionExecute(function () use ($input, $output) {
-            if ($app = $this->buildApp($input, $output)) {
-                $app->migrations()->migrate((int)$input->getOption('count'));
-            }
-        }, $output);
-        return 0;
+        if ($app = $this->buildApp($input, $output)) {
+            $app->migrations()->migrate((int)$input->getOption('count'));
+        }
     }
 }

@@ -9,9 +9,10 @@ declare (strict_types=1);
 
 require __DIR__ . '/../vendor/autoload.php';
 
-use command\CreateCommand;
-use command\MigrateCommand;
 use kradwhite\migration\command\ConfigCommand;
+use kradwhite\migration\command\CreateCommand;
+use kradwhite\migration\command\MigrateCommand;
+use kradwhite\migration\command\RollbackCommand;
 use kradwhite\migration\command\TableCommand;
 use Symfony\Component\Console\Application;
 

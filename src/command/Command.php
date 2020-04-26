@@ -15,13 +15,14 @@ use kradwhite\migration\model\App;
 use kradwhite\migration\model\Config;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class Command
  * @package command
  */
-class Command extends \Symfony\Component\Console\Command\Command
+abstract class Command extends \Symfony\Component\Console\Command\Command
 {
     /** @var App */
     private ?App $app = null;
@@ -64,16 +65,16 @@ class Command extends \Symfony\Component\Console\Command\Command
     }
 
     /**
-     * @param callable $function
+     * @param InputInterface $input
      * @param OutputInterface $output
-     * @return mixed
+     * @return void
      * @throws MigrationException
      * @throws PdoException
      */
-    protected function transactionExecute(callable $function, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $result = $function();
+            $this->doExecute($input, $output);
             $output->writeln("<fg=green>Успешно выполнено</>");
         } catch (MigrationException|DbException $e) {
             if ($this->app && $this->app->connection()->inTransaction()) {
@@ -81,6 +82,23 @@ class Command extends \Symfony\Component\Console\Command\Command
             }
             $output->writeln("<fg=red>{$e->getMessage()}</>");
         }
-        return isset($result) ? $result : null;
     }
+
+    /**
+     * @return void
+     */
+    protected function configure()
+    {
+        $this->addOption('path', null, InputOption::VALUE_OPTIONAL,
+            '<fg=green>Путь хранения файла конфигурации миграций</>')
+            ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
+                '<fg=green>Устанавливает environment с настройками базы данных.</>');
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @return mixed
+     */
+    abstract protected function doExecute(InputInterface $input, OutputInterface $output);
 }

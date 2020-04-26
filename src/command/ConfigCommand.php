@@ -9,10 +9,8 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\command;
 
-use kradwhite\migration\model\App;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -29,28 +27,22 @@ class ConfigCommand extends Command
      */
     protected function configure(): void
     {
+        parent::configure();
         $this->setDescription('<fg=green>Создание файла конфигурации миграций</>')
-            ->setHelp('<fg=green>Создаёт файл конфигурации миграций</>')
-            ->addOption('path', null, InputOption::VALUE_OPTIONAL,
-                '<fg=green>Путь хранения файла конфигурации миграций</>');
+            ->setHelp('<fg=green>Создаёт файл конфигурации миграций</>');
     }
 
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return int
+     * @return void
+     * @throws MigrationException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function doExecute(InputInterface $input, OutputInterface $output)
     {
-        try {
-            if ($app = $this->buildApp($input, $output)) {
-                $filename = $app->config()->create();
-                $output->writeln($filename);
-                $output->writeln("Успешно создан");
-            }
-        } catch (MigrationException $e) {
-            $output->writeln("<fg=red>{$e->getMessage()}");
+        if ($app = $this->buildApp($input, $output)) {
+            $filename = $app->config()->create();
+            $output->writeln($filename);
         }
-        return 0;
     }
 }
