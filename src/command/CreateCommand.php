@@ -19,6 +19,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class CreateCommand extends Command
 {
+    /** @var string */
+    protected static $defaultName = 'create';
+
     /**
      * @return void
      */

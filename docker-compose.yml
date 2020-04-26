@@ -3,9 +3,12 @@ services:
   php:
     build: ./docker/php
     volumes:
-      - ./src:/var/www
+      - ./:/root/app
     links:
       - mysql
+      - pgsql
+    networks:
+      - net
   mysql:
     image: mysql
     ports:
@@ -14,11 +17,19 @@ services:
       - ./docker/mysql/:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DB: test
+    networks:
+      - net
   pgsql:
-    image: postgresql
+    image: postgres
+    restart: always
     ports:
       - "5433:5432"
     volumes:
       - ./docker/pgsql:/var/lib/postgresql
     environment:
-      PGSQL_ROOT_PASSWORD: root
+      POSTGRES_PASSWORD: root
+    networks:
+      - net
+networks:
+  net:

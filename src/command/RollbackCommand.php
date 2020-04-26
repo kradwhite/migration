@@ -20,6 +20,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class RollbackCommand extends Command
 {
+    /** @var string */
+    protected static $defaultName = 'config';
+
     /**
      * @return void
      */

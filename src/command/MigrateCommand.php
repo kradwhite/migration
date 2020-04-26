@@ -20,6 +20,9 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class MigrateCommand extends Command
 {
+    /** @var string */
+    protected static $defaultName = 'migrate';
+
     /**
      * @return void
      */
