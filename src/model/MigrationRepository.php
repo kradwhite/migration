@@ -11,6 +11,7 @@ namespace kradwhite\migration\model;
 
 use kradwhite\db\Connection;
 use kradwhite\db\exception\DbException;
+use kradwhite\db\exception\PdoException;
 
 /**
  * Class MigrationRepository
@@ -149,7 +150,7 @@ class MigrationRepository
         } else if (!is_dir($dirname)) {
             throw new MigrationException("Файл с имененм '$dirname' не является каталогом");
         }
-        $filenames = scandir($dirname,);
+        $filenames = scandir($dirname, 1);
         if ($filenames === false) {
             throw new MigrationException("Ошибка получения файлов из каталога '$dirname'");
         }
@@ -160,5 +161,25 @@ class MigrationRepository
             }
         }
         return $result;
+    }
+
+    /**
+     * @return void
+     * @throws PdoException
+     */
+    public function begin()
+    {
+        $this->connection->begin();
+    }
+
+    /**
+     * @return void
+     * @throws PdoException
+     */
+    public function commit()
+    {
+        if ($this->connection->inTransaction()) {
+            $this->connection->commit();
+        }
     }
 }

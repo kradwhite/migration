@@ -4,8 +4,8 @@
 
 actor: UnitTester
 modules:
-    enabled:
-        - Asserts
-        - \Helper\Unit
-        - Filesystem
-    step_decorators: ~
+  enabled:
+    - Asserts
+    - \Helper\Unit
+    - Filesystem
+  step_decorators: ~

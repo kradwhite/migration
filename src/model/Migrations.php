@@ -11,6 +11,7 @@ namespace kradwhite\migration\model;
 
 use DateTime;
 use kradwhite\db\exception\DbException;
+use kradwhite\db\exception\PdoException;
 
 /**
  * Class Migrations
@@ -60,41 +61,39 @@ class Migrations
      * @param int $count
      * @return void
      * @throws MigrationException
+     * @throws PdoException
      */
     public function migrate(int $count)
     {
-        if (!$count) {
-            $count = count($this->migrations);
-        }
-        $newMigrations = [];
+        $count = $this->calculateCount($count);
         foreach ($this->repository->loadMigrationNamesFromDirectory() as &$class) {
             if (!array_key_exists($class, $this->migrations)) {
-                $newMigrations[$class] = ['name' => $class, 'date' => $this->obtainDateFromClass($class)];
-                $newMigrations[$class]['id'] = $this->repository->add($newMigrations[$class]);
+                $this->repository->begin();
                 $this->repository->buildMigration($class)->up();
+                $this->repository->add(['name' => $class, 'date' => $this->obtainDateFromClass($class)]);
+                $this->repository->commit();
                 if (!--$count) {
                     break;
                 }
             }
         }
-        $this->migrations = array_merge($this->migrations, $newMigrations);
-        sort($this->migrations);
     }
 
     /**
      * @param int $count
      * @return void
      * @throws MigrationException
+     * @throws PdoException
      */
     public function rollback(int $count)
     {
-        if (!$count) {
-            $count = count($this->migrations);
-        }
-        while ($count--) {
+        $count = $this->calculateCount($count);
+        while ($this->migrations && $count-- > 0) {
             $migration = array_pop($this->migrations);
+            $this->repository->begin();
             $this->repository->buildMigration($migration['name'])->down();
             $this->repository->removeById($migration['id']);
+            $this->repository->commit();
         }
     }
 
@@ -104,7 +103,16 @@ class Migrations
      */
     private function obtainDateFromClass(string $class): string
     {
-        return DateTime::createFromFormat("Y_m_d__H_i_s", substr($class, 1, 21))->format("Y-m-d H:i:s");
+        return DateTime::createFromFormat("Y_m_d__H_i_s", substr($class, 1, 20))->format("Y-m-d H:i:s");
+    }
+
+    /**
+     * @param int $count
+     * @return int
+     */
+    private function calculateCount(int $count): int
+    {
+        return $count < 1 ? count($this->migrations) : $count;
     }
 
     /**
