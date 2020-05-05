@@ -81,7 +81,7 @@ class App
     private function getDriver(): Driver
     {
         try {
-            return DriverFactory::buildFromArray($this->config()->getDriver(), $this->config()->getEnvironment());
+            return DriverFactory::buildFromArray($this->config()->getEnvironment());
         } catch (BeforeQueryException $e) {
             throw new MigrationException("Ошибка создания драйвера. " . $e->getMessage(), $e->getCode(), $e);
         }
@@ -100,6 +100,6 @@ class App
         if (!$config = yaml_parse_file($filename)) {
             throw new MigrationException("Неверный формат данных в файле конфигурации '$filename'");
         }
-        return new Config($config, $config['defaults']['environment']);
+        return new Config($config);
     }
 }

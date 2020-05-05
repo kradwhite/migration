@@ -7,29 +7,32 @@ services:
     links:
       - mysql
       - pgsql
-    networks:
-      - net
   mysql:
-    image: mysql
-    ports:
-      - "3307:3306"
-    volumes:
-      - ./docker/mysql/:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DB: test
-    networks:
-      - net
-  pgsql:
-    image: postgres
+    image: mysql:8.0
     restart: always
     ports:
-      - "5433:5432"
+      - "3306:3306"
     volumes:
-      - ./docker/pgsql:/var/lib/postgresql
+      - mysql-data:/var/lib/mysql
     environment:
-      POSTGRES_PASSWORD: root
-    networks:
-      - net
-networks:
-  net:
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=admin
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DB=test-1
+      - PHP_IDE_CONFIG="serverName=Docker"
+  pgsql:
+    image: postgres:12
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgsql-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_DB=test-2
+volumes:
+  mysql-data:
+    external: false
+  pgsql-data:
+    external: false

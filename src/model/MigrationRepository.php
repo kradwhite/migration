@@ -44,10 +44,10 @@ class MigrationRepository
     {
         $this->connection->begin();
         $this->connection->table($this->config->getMigrationTable())
+            ->primaryKey('id')
             ->addColumn('id', 'bigauto', ['null' => false])
             ->addColumn('date', 'datetime', ['null' => false])
             ->addColumn('name', 'string', ['null' => false, 'limit' => 256])
-            ->primaryKey('id')
             ->addIndex(['date'])
             ->addIndex(['name'], ['unique' => true])
             ->create();

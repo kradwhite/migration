@@ -2,23 +2,25 @@ paths:
   migrations: "migrations/"
 
 defaults:
-  migration_table: migrations
+  table: migrations
   environment: testing
 
 environments:
   testing:
     driver: pgsql
     host: localhost
-    name: test
+    db: test
     user: admin
-    pass: 'admin'
+    pass: admin
     port: 5432
     charset: utf8
+    # table: migrations
   production:
     driver: pgsql
     host: localhost
-    name: prod
+    db: prod
     user: admin
-    pass: 'admin'
+    pass: admin
     port: 5432
     charset: utf8
+    # table: migrations

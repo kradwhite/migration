@@ -27,17 +27,14 @@ class Config
     /**
      * Config constructor.
      * @param array $config
-     * @param string $environment
      * @throws MigrationException
      */
-    public function __construct(array $config, string $environment)
+    public function __construct(array $config)
     {
-        if (!$environment) {
-            if (!isset($config['defaults']['environment']) && !$config['defaults']['environment']) {
-                throw new MigrationException("Не указана environment..");
-            }
-            $environment = $config['defaults']['environment'];
+        if (!isset($config['defaults']['environment']) || !$config['defaults']['environment']) {
+            throw new MigrationException("Не указана environment");
         }
+        $environment = $config['defaults']['environment'];
         $this->config = $config;
         $this->environment = $environment;
     }
@@ -64,7 +61,7 @@ class Config
     public function getEnvironment(): array
     {
         if (!isset($this->config['environments'][$this->environment])) {
-            throw new MigrationException("");
+            throw new MigrationException("Environment '{$this->environment}' не найден в конфиг файле");
         }
         return $this->config['environments'][$this->environment];
     }
@@ -75,10 +72,10 @@ class Config
      */
     public function getMigrationTable(): string
     {
-        if (isset($this->config['environments'][$this->environment]['migration_table'])) {
-            return $this->config['environments'][$this->environment]['migration_table'];
-        } else if (isset($this->config['defaults']['migration_table'])) {
-            return $this->config['defaults']['migration_table'];
+        if (isset($this->config['environments'][$this->environment]['table'])) {
+            return $this->config['environments'][$this->environment]['table'];
+        } else if (isset($this->config['defaults']['table'])) {
+            return $this->config['defaults']['table'];
         }
         throw new MigrationException("Не указано имя таблицы с миграциями");
     }

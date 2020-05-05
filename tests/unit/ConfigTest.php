@@ -1,0 +1,119 @@
+<?php
+
+namespace kradwhite\tests\unit;
+
+use kradwhite\migration\model\Config;
+use kradwhite\migration\model\MigrationException;
+
+class ConfigTest extends \Codeception\Test\Unit
+{
+    /**
+     * @var \UnitTester
+     */
+    protected $tester;
+
+    protected function _before()
+    {
+    }
+
+    protected function _after()
+    {
+    }
+
+    // tests
+    public function testConstructFail()
+    {
+        $this->tester->expectThrowable(new MigrationException("Не указана environment"), function () {
+            new Config([]);
+        });
+    }
+
+    public function testConstructSuccess()
+    {
+        new Config(['defaults' => ['environment' => 'testing']]);
+    }
+
+    public function testCreateFailAlreadyExist()
+    {
+        $this->tester->amInPath('tests/_data/');
+        $this->tester->writeToFile('migrations.yml', '');
+        $pwd = getcwd();
+        $this->tester->expectThrowable(new MigrationException("Файл конфигурации '$pwd/migrations.yml' уже существует"), function () {
+            (new Config(['defaults' => ['environment' => 'testing']]))->create();
+        });
+        $this->tester->deleteFile('migrations.yml');
+    }
+
+    public function testCreateSuccess()
+    {
+        $this->tester->amInPath('tests/_data/');
+        (new Config(['defaults' => ['environment' => 'testing']]))->create();
+        $this->tester->assertFileExists('migrations.yml');
+        $this->tester->deleteFile('migrations.yml');
+    }
+
+    public function testGetEnvironmentFailNotFound()
+    {
+        $this->tester->expectThrowable(new MigrationException("Environment 'testing' не найден в конфиг файле"), function () {
+            (new Config(['defaults' => ['environment' => 'testing']]))->getEnvironment();
+        });
+    }
+
+    public function testGetEnvironmentSuccess()
+    {
+        $config = ['defaults' => ['environment' => 'testing'], 'environments' => ['testing' => ['data']]];
+        $environment = (new Config($config))->getEnvironment();
+        $this->assertEquals($environment, ['data']);
+    }
+
+    public function testGetMigrationTableFail()
+    {
+        $this->tester->expectThrowable(new MigrationException("Не указано имя таблицы с миграциями"), function () {
+            (new Config(['defaults' => ['environment' => 'testing']]))->getMigrationTable();
+        });
+    }
+
+    public function testGetMigrationTableFromEnvironment()
+    {
+        $config = ['defaults' => ['environment' => 'testing'], 'environments' => ['testing' => ['table' => 'migrations']]];
+        $tableName = (new Config($config))->getMigrationTable();
+        $this->assertEquals($tableName, 'migrations');
+    }
+
+    public function testGetMigrationTableFromDefaults()
+    {
+        $config = ['defaults' => ['environment' => 'testing', 'table' => 'migrations'], 'environments' => []];
+        $tableName = (new Config($config))->getMigrationTable();
+        $this->assertEquals($tableName, 'migrations');
+    }
+
+    public function testGetPathFail()
+    {
+        $this->tester->expectThrowable(new MigrationException("Не указан путь до каталога с миграциями"), function () {
+            $config = ['defaults' => ['environment' => 'testing']];
+            (new Config($config))->getPath();
+        });
+    }
+
+    public function testGetPathSuccess()
+    {
+        $config = ['defaults' => ['environment' => 'testing'], 'paths' => ['migrations' => '_data']];
+        $path = (new Config($config))->getPath();
+        $this->assertEquals($path, getcwd() . '/_data');
+    }
+
+    public function testGetDriverFail()
+    {
+        $this->tester->expectThrowable(new MigrationException("Не указан драйвер внутри 'testing' environment"), function(){
+            $config = ['defaults' => ['environment' => 'testing']];
+            (new Config($config))->getDriver();
+        });
+    }
+
+    public function testGetDriverSuccess()
+    {
+        $config = ['defaults' => ['environment' => 'testing'], 'environments' => ['testing' => ['driver' => 'pgsql']]];
+        $driver = (new Config($config))->getDriver();
+        $this->assertEquals($driver, 'pgsql');
+    }
+}
