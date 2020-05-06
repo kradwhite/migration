@@ -10,8 +10,10 @@ declare (strict_types=1);
 namespace kradwhite\migration\model;
 
 use kradwhite\db\Connection;
+use kradwhite\db\exception\BeforeQueryException;
 use kradwhite\db\exception\DbException;
 use kradwhite\db\exception\PdoException;
+use kradwhite\db\exception\PdoStatementException;
 
 /**
  * Class MigrationRepository
@@ -45,10 +47,10 @@ class MigrationRepository
     {
         $this->connection->begin();
         $this->connection->table($this->config->getMigrationTable())
-            ->primaryKey('id')
             ->addColumn('id', 'bigauto', ['null' => false])
             ->addColumn('date', 'datetime', ['null' => false])
             ->addColumn('name', 'string', ['null' => false, 'limit' => 256])
+            ->primaryKey('id')
             ->addIndex(['date'])
             ->addIndex(['name'], ['unique' => true])
             ->create();
@@ -60,33 +62,31 @@ class MigrationRepository
     /**
      * @return Migrations
      * @throws MigrationException
+     * @throws PdoException
+     * @throws PdoStatementException
+     * @throws BeforeQueryException
      */
     public function loadMigrations(): Migrations
     {
-        try {
-            $raw = $this->connection->selectMultiple($this->config->getMigrationTable(), [], [])->prepareExecute('assoc', ['name']);
-            $attributes = [];
-            foreach ($raw as &$migration) {
-                $attributes[$migration['name']] = $migration;
-            }
-            return new Migrations($attributes, $this);
-        } catch (DbException $e) {
-            throw new MigrationException($e->getMessage(), $e->getCode(), $e);
+        $raw = $this->connection->selectMultiple($this->config->getMigrationTable(), [], [])->prepareExecute('assoc', ['name']);
+        $attributes = [];
+        foreach ($raw as &$migration) {
+            $attributes[$migration['name']] = $migration;
         }
+        unset($attributes['init']);
+        return new Migrations($attributes, $this);
     }
 
     /**
      * @param array $attributes
-     * @return int
+     * @return void
      * @throws MigrationException
+     * @throws PdoException
+     * @throws PdoStatementException
      */
-    public function add(array $attributes): int
+    public function add(array $attributes)
     {
-        try {
-            return (int)$this->connection->insert($this->config->getMigrationTable(), $attributes)->prepareExecute();
-        } catch (DbException $e) {
-            throw new MigrationException($e->getMessage(), $e->getCode(), $e);
-        }
+        $this->connection->insert($this->config->getMigrationTable(), $attributes)->prepareExecute();
     }
 
     /**
@@ -112,14 +112,12 @@ class MigrationRepository
      * @param int $id
      * @return void
      * @throws MigrationException
+     * @throws PdoException
+     * @throws PdoStatementException
      */
     public function removeById(int $id)
     {
-        try {
-            $this->connection->delete($this->config->getMigrationTable(), ['id' => $id])->prepareExecute();
-        } catch (DbException $e) {
-            throw new MigrationException($e->getMessage(), $e->getCode(), $e);
-        }
+        $this->connection->delete($this->config->getMigrationTable(), ['id' => $id])->prepareExecute();
     }
 
     /**

@@ -98,6 +98,14 @@ class Migrations
     }
 
     /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return count($this->migrations);
+    }
+
+    /**
      * @param string $class
      * @return string
      */

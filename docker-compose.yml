@@ -11,20 +11,20 @@ services:
     image: mysql:8.0
     restart: always
     ports:
-      - "3306:3306"
+      - 3306:3306
     volumes:
       - mysql-data:/var/lib/mysql
     environment:
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=admin
       - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DB=test-1
+      - MYSQL_DATABASE=test-1
       - PHP_IDE_CONFIG="serverName=Docker"
   pgsql:
     image: postgres:12
     restart: always
     ports:
-      - "5432:5432"
+      - 5432:5432
     volumes:
       - pgsql-data:/var/lib/postgresql/data
     environment:

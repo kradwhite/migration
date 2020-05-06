@@ -1,0 +1,14 @@
+actor: MySqlTester
+modules:
+  enabled:
+    - \Helper\MySql
+    - Asserts
+    - Db:
+        dsn: 'mysql:host=mysql;dbname=test-1;port=3306'
+        user: 'admin'
+        password: 'admin'
+        cleanup: true
+        populate: true
+        dump: 'tests/_data/my.sql'
+    - Filesystem
+  step_decorators: ~

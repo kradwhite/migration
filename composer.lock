@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "kradwhite/db",
-            "version": "0.12",
+            "version": "0.16.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/kradwhite/db.git",
-                "reference": "2d95d9b40279c5f3bd8be5e4227a02884ea1ebd8"
+                "reference": "6f44fca393517d85272faabbdd0fbb6cf647ec61"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kradwhite/db/zipball/2d95d9b40279c5f3bd8be5e4227a02884ea1ebd8",
-                "reference": "2d95d9b40279c5f3bd8be5e4227a02884ea1ebd8",
+                "url": "https://api.github.com/repos/kradwhite/db/zipball/6f44fca393517d85272faabbdd0fbb6cf647ec61",
+                "reference": "6f44fca393517d85272faabbdd0fbb6cf647ec61",
                 "shasum": ""
             },
             "require": {
@@ -54,7 +54,7 @@
                 "query builder",
                 "sql"
             ],
-            "time": "2020-05-04T10:04:24+00:00"
+            "time": "2020-05-06T16:11:14+00:00"
         },
         {
             "name": "psr/container",

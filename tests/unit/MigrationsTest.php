@@ -40,6 +40,10 @@ class MigrationsTest extends \Codeception\Test\Unit
                 ++$this->countExecutedMigrations;
                 return 1;
             },
+            'createTable' => 'table',
+            'createFile' => function (string $className, string $content) {
+                return $className;
+            }
         ]);
     }
 
@@ -50,16 +54,14 @@ class MigrationsTest extends \Codeception\Test\Unit
     // tests
     public function testCreate()
     {
-        $result = (new Migrations([], $this->make(MigrationRepository::class, ['createTable' => 'table'])))->create();
+        $result = (new Migrations([], $this->repo))->create();
         $this->assertEquals($result, 'table');
     }
 
     public function testCreateMigration()
     {
         $className = 'add_migration';
-        $result = (new Migrations([], $this->make(MigrationRepository::class, ['createFile' => function (string $className, string $content) {
-            return $className;
-        }])))->createMigration($className);
+        $result = (new Migrations([], $this->repo))->createMigration($className);
         $this->assertEquals(date("_Y_m_d__H_i_s__") . $className, $result);
     }
 
