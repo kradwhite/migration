@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class RollbackCommand extends Command
 {
     /** @var string */
-    protected static $defaultName = 'config';
+    protected static $defaultName = 'rollback';
 
     /**
      * @return void
@@ -29,10 +29,10 @@ class RollbackCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription("<fg=green>Применение миграций</>")
-            ->setHelp('<fg=green>Запускает выполение миграций</>')
+        $this->setDescription("Откат миграций")
+            ->setHelp('Запускает откат миграций')
             ->addOption('count', 'c', InputOption::VALUE_OPTIONAL,
-                '<fg=green>Колличество миграция, которые будут выполены</>');
+                'Колличество миграций, которые будут выполены');
     }
 
     /**

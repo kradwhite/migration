@@ -48,7 +48,7 @@ class MigrationRepository
         $this->connection->begin();
         $this->connection->table($this->config->getMigrationTable())
             ->addColumn('id', 'bigauto', ['null' => false])
-            ->addColumn('date', 'datetime', ['null' => false])
+            ->addColumn('date', 'timestamp', ['null' => false])
             ->addColumn('name', 'string', ['null' => false, 'limit' => 256])
             ->primaryKey('id')
             ->addIndex(['date'])
@@ -130,8 +130,8 @@ class MigrationRepository
         require $this->config->getPath() . "/$className.php";
         if (!class_exists($className)) {
             throw new MigrationException("Не найден класс '$className' миграции");
-        } else if (!is_a($className, Migration::class)) {
-            throw new MigrationException("Миграция должна быть унаследована от 'kradwhite\migration\Migration::class");
+        } else if (!is_a($className, Migration::class, true)) {
+            throw new MigrationException("Миграция '$className' должна быть унаследована от 'kradwhite\migration\Migration::class");
         }
         return new $className($this->connection);
     }
@@ -147,14 +147,12 @@ class MigrationRepository
             throw new MigrationException("Каталог с миграциями '$dirname' не найден");
         } else if (!is_dir($dirname)) {
             throw new MigrationException("Файл с имененм '$dirname' не является каталогом");
-        }
-        $filenames = scandir($dirname, 1);
-        if ($filenames === false) {
+        } else if (($filenames = scandir($dirname, SCANDIR_SORT_DESCENDING)) === false) {
             throw new MigrationException("Ошибка получения файлов из каталога '$dirname'");
         }
         $result = [];
         foreach ($filenames as &$filename) {
-            if (preg_match(`_\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}__[A-Za-z_]{1,}.php`, $filename)) {
+            if (preg_match("/_\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}__[a-zA-Z,1-9,_]{1,}.php/", $filename)) {
                 $result[] = substr($filename, 0, -4);
             }
         }

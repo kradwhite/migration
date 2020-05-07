@@ -89,10 +89,10 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      */
     protected function configure()
     {
-        $this->addOption('path', null, InputOption::VALUE_OPTIONAL,
-            '<fg=green>Путь хранения файла конфигурации миграций</>')
+        $this->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
+            'Путь хранения файла конфигурации миграций')
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
-                '<fg=green>Устанавливает environment с настройками базы данных.</>');
+                'Устанавливает environment с настройками базы данных');
     }
 
     /**

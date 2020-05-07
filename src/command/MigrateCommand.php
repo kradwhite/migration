@@ -29,10 +29,10 @@ class MigrateCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription("<fg=green>Применение миграций</>")
-            ->setHelp('<fg=green>Запускает выполение миграций</>')
+        $this->setDescription("Применение миграций")
+            ->setHelp('Запускает выполение миграций')
             ->addOption('count', 'c', InputOption::VALUE_OPTIONAL,
-                '<fg=green>Колличество миграция, которые будут выполены</>');
+                'Колличество миграций, которые будут выполены');
     }
 
     /**

@@ -28,8 +28,8 @@ class ConfigCommand extends Command
     protected function configure(): void
     {
         parent::configure();
-        $this->setDescription('<fg=green>Создание файла конфигурации миграций</>')
-            ->setHelp('<fg=green>Создаёт файл конфигурации миграций</>');
+        $this->setDescription('Создание файла конфигурации миграций')
+            ->setHelp('Создаёт файл конфигурации миграций');
     }
 
     /**

@@ -1,0 +1,6 @@
+actor: CLITester
+modules:
+  enabled:
+    - \Helper\CLI
+    - Filesystem
+    - Cli

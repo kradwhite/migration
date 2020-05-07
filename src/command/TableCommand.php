@@ -30,10 +30,10 @@ class TableCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription('<fg=green>Создание таблицы для хранения миграций.</>')
-            ->setHelp('<fg=green>Создаёт таблицу для хранения миграций.</>')
+        $this->setDescription('Создание таблицы для хранения миграций')
+            ->setHelp('Создаёт таблицу для хранения миграций')
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
-                '<fg=green>Устанавливает environment с настройками базы данных.</>');
+                'Устанавливает environment с настройками базы данных');
     }
 
     /**

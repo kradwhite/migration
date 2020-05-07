@@ -28,9 +28,9 @@ class CreateCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription("<fg=green>Создание миграции</>")
-            ->setHelp('<fg=green>Создаёт миграцию</>')
-            ->addUsage('<fg=green>Имя миграции');
+        $this->setDescription("Создание миграции")
+            ->setHelp('Создаёт миграцию')
+            ->addUsage('<fg=green>Имя миграции</>');
     }
 
     /**

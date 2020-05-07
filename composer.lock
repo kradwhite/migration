@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0b3e713511f875baa877ffa51acef1da",
+    "content-hash": "69eaeba2bca4009d1802b6206243800c",
     "packages": [
         {
             "name": "kradwhite/db",
@@ -699,6 +699,52 @@
                 "codeception"
             ],
             "time": "2020-04-20T07:26:11+00:00"
+        },
+        {
+            "name": "codeception/module-cli",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Codeception/module-cli.git",
+                "reference": "ca35844de0392356b413e93dba52423aaf1a67a6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Codeception/module-cli/zipball/ca35844de0392356b413e93dba52423aaf1a67a6",
+                "reference": "ca35844de0392356b413e93dba52423aaf1a67a6",
+                "shasum": ""
+            },
+            "require": {
+                "codeception/codeception": "*@dev",
+                "php": ">=5.6.0 <8.0"
+            },
+            "conflict": {
+                "codeception/codeception": "<4.0"
+            },
+            "require-dev": {
+                "codeception/util-robohelpers": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "src/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Bodnarchuk"
+                }
+            ],
+            "description": "Codeception module for testing basic shell commands and shell output",
+            "homepage": "http://codeception.com/",
+            "keywords": [
+                "codeception"
+            ],
+            "time": "2020-02-07T17:34:13+00:00"
         },
         {
             "name": "codeception/module-db",
