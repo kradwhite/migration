@@ -40,7 +40,7 @@ class RollbackCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @throws MigrationException
      */
     protected function doExecute(InputInterface $input, OutputInterface $output)
@@ -48,5 +48,6 @@ class RollbackCommand extends Command
         if ($app = $this->buildApp($input, $output)) {
             $app->migrations()->rollback((int)$input->getOption('count'));
         }
+        return (int)!$app;
     }
 }

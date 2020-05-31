@@ -9,6 +9,7 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\command;
 
+use kradwhite\config\ConfigException;
 use kradwhite\db\exception\DbException;
 use kradwhite\language\LangException;
 use kradwhite\migration\model\App;
@@ -50,7 +51,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      */
     protected function getConfigFileName(InputInterface $input): string
     {
-        if (!$path = $input->getOption('path') ? $input->getOption('path') : getcwd()) {
+        if (!$path = $input->getOption('path')) {
             return '';
         } else if ($path[0] != DIRECTORY_SEPARATOR) {
             if (!$prefix = getcwd()) {
@@ -67,19 +68,21 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->doExecute($input, $output);
+            $result = $this->doExecute($input, $output);
             $output->writeln(App::lang()->phrase('messages', 'success-execute'));
-        } catch (MigrationException|DbException|LangException $e) {
+            return $result;
+        } catch (MigrationException|DbException|LangException|ConfigException $e) {
             if ($this->app && $this->app->connection()->inTransaction()) {
                 $this->app->connection()->rollback();
             }
             $output->writeln(App::lang()->phrase('messages', 'exception-message'));
         }
+        return 1;
     }
 
     /**
@@ -87,10 +90,11 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      */
     protected function configure()
     {
+        $messages = App::lang()->text('messages');
         $this->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
-            App::lang()->phrase('messages', 'option-path-description'))
+            $messages->phrase('option-path-description'), getcwd())
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
-                App::lang()->phrase('messages', 'option-environment-description'));
+                $messages->phrase('option-environment-description'));
     }
 
     /**

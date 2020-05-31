@@ -38,7 +38,7 @@ class CreateCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @throws MigrationException
      */
     protected function doExecute(InputInterface $input, OutputInterface $output)
@@ -47,5 +47,6 @@ class CreateCommand extends Command
             $name = $app->migrations()->createMigration((string)$input->getOption('name'));
             $output->writeln($name);
         }
+        return (int)!$app;
     }
 }

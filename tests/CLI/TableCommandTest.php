@@ -2,7 +2,7 @@
 
 namespace kradwhite\tests\CLI;
 
-class ConfigTest extends \Codeception\Test\Unit
+class TableCommandTest extends \Codeception\Test\Unit
 {
     /**
      * @var \CLITester

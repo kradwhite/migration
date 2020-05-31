@@ -9,6 +9,8 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\model;
 
+use kradwhite\config\ConfigException;
+
 /**
  * Class Config
  * @package model
@@ -40,18 +42,16 @@ class Config
     }
 
     /**
+     * @param string $path
+     * @param string $locale
      * @return string
-     * @throws MigrationException
+     * @throws ConfigException
      */
-    public function create(): string
+    public function create(string $path, string $locale): string
     {
-        $name = $this->getWorkPath() . self::Name;
-        if (file_exists($name)) {
-            throw new MigrationException('config-file-already-exist', [$name]);
-        } else if (!yaml_emit_file($name, $this->config)) {
-            throw new MigrationException('config-file-create-error', [$name]);
-        }
-        return $name;
+        $source = __DIR__ . '/../../config';
+        (new \kradwhite\config\Config($source))->build($path, $locale);
+        return $path . self::Name;
     }
 
     /**

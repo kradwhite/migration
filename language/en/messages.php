@@ -5,6 +5,7 @@ return [
     'success-execute' => '<fg=green>Completed successfully</>',
     'option-path-description' => 'The migration configuration file storage path',
     'option-environment-description' => 'Sets environment with database settings',
+    'option-locale-description' => 'Comment language settings inside the migration configuration file',
     'exception-message' => '<fg=red>%s</>',
     'config-command-description' => 'Creating a migration configuration file',
     'config-command-help' => 'Creates a migration configuration file',

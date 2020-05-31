@@ -5,6 +5,7 @@ return [
     'success-execute' => '<fg=green>Успешно выполнено</>',
     'option-path-description' => 'Путь хранения файла конфигурации миграций',
     'option-environment-description' => 'Устанавливает environment с настройками базы данных',
+    'option-locale-description' => 'Настройки языка комментариев внутри файла конфигурации миграций',
     'exception-message' => '<fg=red>%s</>',
     'config-command-description' => 'Создание файла конфигурации миграций',
     'config-command-help' => 'Создаёт файл конфигурации миграций',

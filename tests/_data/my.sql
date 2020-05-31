@@ -2,6 +2,9 @@ DROP TABLE IF EXISTS `migrations-create-table`;
 DROP TABLE IF EXISTS `migrations-load`;
 DROP TABLE IF EXISTS `migrations-add`;
 DROP TABLE IF EXISTS `migrations-remove-by-id`;
+DROP TABLE IF EXISTS `command-table`;
+DROP TABLE IF EXISTS `command-migrate`;
+DROP TABLE IF EXISTS `command-rollback`;
 
 CREATE TABLE `migrations-load`
 (

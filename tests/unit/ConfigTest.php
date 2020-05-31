@@ -33,23 +33,15 @@ class ConfigTest extends \Codeception\Test\Unit
         new Config(['defaults' => ['environment' => 'testing']]);
     }
 
-    public function testCreateFailAlreadyExist()
-    {
-        $this->tester->amInPath('tests/_data/');
-        $this->tester->writeToFile('migrations.yml', '');
-        $pwd = getcwd();
-        $this->tester->expectThrowable(new MigrationException('config-file-already-exist', ["$pwd/migrations.yml"]), function () {
-            (new Config(['defaults' => ['environment' => 'testing']]))->create();
-        });
-        $this->tester->deleteFile('migrations.yml');
-    }
-
     public function testCreateSuccess()
     {
         $this->tester->amInPath('tests/_data/');
-        (new Config(['defaults' => ['environment' => 'testing']]))->create();
-        $this->tester->assertFileExists('migrations.yml');
-        $this->tester->deleteFile('migrations.yml');
+        $cwd = getcwd();
+        if (file_exists($cwd . '/' . Config::Name)) {
+            $this->tester->deleteFile(Config::Name);
+        }
+        (new Config(['defaults' => ['environment' => 'testing']]))->create($cwd . '/', 'ru');
+        $this->tester->assertFileExists($cwd . '/' . Config::Name);
     }
 
     public function testGetEnvironmentFailNotFound()
@@ -104,7 +96,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testGetDriverFail()
     {
-        $this->tester->expectThrowable(new MigrationException('driver-not-found', ['testing']), function(){
+        $this->tester->expectThrowable(new MigrationException('driver-not-found', ['testing']), function () {
             $config = ['defaults' => ['environment' => 'testing']];
             (new Config($config))->getDriver();
         });

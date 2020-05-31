@@ -1,0 +1,54 @@
+# Настройки путей
+paths:
+
+  # Путь до каталога с миграциями
+  migrations: "migrations/"
+
+# Настройки по умолчанию
+defaults:
+
+  # Имя таблицы по умолчанию на уровне всего приложения
+  table: migrations
+
+  # Environment будет выбран по умолчанию, если не передан аргументом командной строки -e
+  environment: testing
+
+# Список environment
+environments:
+
+  # Environment с именем testing
+  testing:
+
+    # Драйвер базы данных. Доступны mysql,pgsql
+    driver: pgsql
+
+    # Host базы данных
+    host: localhost
+
+    # Имя базы данных
+    db: test
+
+    # Имя пользователя базы данных
+    user: admin
+
+    # Пароль пользователя базы данных
+    pass: admin
+
+    # Порт базы данных
+    port: 5432
+
+    # Настройки кодировки
+    charset: utf8
+
+    # Имя таблицы с миграциями в данной environment
+    # table: migrations
+
+  production:
+    driver: pgsql
+    host: localhost
+    db: prod
+    user: admin
+    pass: admin
+    port: 5432
+    charset: utf8
+    # table: migrations

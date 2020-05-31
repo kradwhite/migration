@@ -41,7 +41,7 @@ class TableCommand extends Command
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
-     * @return void
+     * @return int
      * @throws MigrationException
      * @throws DbException
      */
@@ -50,5 +50,6 @@ class TableCommand extends Command
         if ($app = $this->buildApp($input, $output)) {
             $app->migrations()->create();
         }
+        return (int)!$app;
     }
 }
