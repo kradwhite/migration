@@ -54,7 +54,8 @@ class MigrationRepository
             ->addIndex(['date'])
             ->addIndex(['name'], ['unique' => true])
             ->create();
-        $this->connection->table($this->config->getMigrationTable())->insert(['date' => date("Y-m-d H:i:s"), 'name' => 'init']);
+        $this->connection->table($this->config->getMigrationTable())
+            ->insert(['date' => date("Y-m-d H:i:s"), 'name' => 'init']);
         $this->connection->commit();
         return $this->config->getMigrationTable();
     }
@@ -68,7 +69,8 @@ class MigrationRepository
      */
     public function loadMigrations(): Migrations
     {
-        $raw = $this->connection->selectMultiple($this->config->getMigrationTable(), [], [])->prepareExecute('assoc', ['name']);
+        $raw = $this->connection->selectMultiple($this->config->getMigrationTable(), [], [])
+            ->prepareExecute('assoc', ['name']);
         $attributes = [];
         foreach ($raw as &$migration) {
             $attributes[$migration['name']] = $migration;
@@ -99,11 +101,11 @@ class MigrationRepository
     {
         $fileName = $this->config->getPath() . "/$className.php";
         if (file_exists($fileName)) {
-            throw new MigrationException("Миграция с именем '$fileName' уже существует");
+            throw new MigrationException('migration-already-exist', [$fileName]);
         } else if (!file_put_contents($fileName, $content)) {
-            throw new MigrationException("Ошибка создания файла '$fileName'");
+            throw new MigrationException('migration-file-create-error', [$fileName]);
         } else if (!chmod($fileName, 0664)) {
-            throw new MigrationException("Ошибка установки доступов 0664 на файл '$fileName'");
+            throw new MigrationException('migration-file-chmod-error', [$fileName]);
         }
         return $fileName;
     }
@@ -129,9 +131,9 @@ class MigrationRepository
     {
         require $this->config->getPath() . "/$className.php";
         if (!class_exists($className)) {
-            throw new MigrationException("Не найден класс '$className' миграции");
+            throw new MigrationException('migration-class-not-found', [$className]);
         } else if (!is_a($className, Migration::class, true)) {
-            throw new MigrationException("Миграция '$className' должна быть унаследована от 'kradwhite\migration\Migration::class");
+            throw new MigrationException('migration-not-is-a-migration', [$className]);
         }
         return new $className($this->connection);
     }
@@ -144,15 +146,15 @@ class MigrationRepository
     {
         $dirname = $this->config->getPath();
         if (!file_exists($dirname)) {
-            throw new MigrationException("Каталог с миграциями '$dirname' не найден");
+            throw new MigrationException('migration-dir-not-found', [$dirname]);
         } else if (!is_dir($dirname)) {
-            throw new MigrationException("Файл с имененм '$dirname' не является каталогом");
+            throw new MigrationException('migration-dir-not-dir', [$dirname]);
         } else if (($filenames = scandir($dirname, SCANDIR_SORT_DESCENDING)) === false) {
-            throw new MigrationException("Ошибка получения файлов из каталога '$dirname'");
+            throw new MigrationException('migration-dir-scan-error', [$dirname]);
         }
         $result = [];
         foreach ($filenames as &$filename) {
-            if (preg_match("/_\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}__[a-zA-Z,1-9,_]{1,}.php/", $filename)) {
+            if (preg_match("/_\d{4}_\d{2}_\d{2}__\d{2}_\d{2}_\d{2}__[a-zA-Z1-9_]{1,}.php/", $filename)) {
                 $result[] = substr($filename, 0, -4);
             }
         }

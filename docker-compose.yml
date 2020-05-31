@@ -19,7 +19,6 @@ services:
       - MYSQL_PASSWORD=admin
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=test-1
-      - PHP_IDE_CONFIG="serverName=Docker"
   pgsql:
     image: postgres:12
     restart: always

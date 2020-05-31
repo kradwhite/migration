@@ -23,7 +23,7 @@ class ConfigTest extends \Codeception\Test\Unit
     // tests
     public function testConstructFail()
     {
-        $this->tester->expectThrowable(new MigrationException("Не указана environment"), function () {
+        $this->tester->expectThrowable(new MigrationException('environment-not-found'), function () {
             new Config([]);
         });
     }
@@ -38,7 +38,7 @@ class ConfigTest extends \Codeception\Test\Unit
         $this->tester->amInPath('tests/_data/');
         $this->tester->writeToFile('migrations.yml', '');
         $pwd = getcwd();
-        $this->tester->expectThrowable(new MigrationException("Файл конфигурации '$pwd/migrations.yml' уже существует"), function () {
+        $this->tester->expectThrowable(new MigrationException('config-file-already-exist', ["$pwd/migrations.yml"]), function () {
             (new Config(['defaults' => ['environment' => 'testing']]))->create();
         });
         $this->tester->deleteFile('migrations.yml');
@@ -54,7 +54,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testGetEnvironmentFailNotFound()
     {
-        $this->tester->expectThrowable(new MigrationException("Environment 'testing' не найден в конфиг файле"), function () {
+        $this->tester->expectThrowable(new MigrationException('config-file-environment-not-found', ['testing']), function () {
             (new Config(['defaults' => ['environment' => 'testing']]))->getEnvironment();
         });
     }
@@ -68,7 +68,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testGetMigrationTableFail()
     {
-        $this->tester->expectThrowable(new MigrationException("Не указано имя таблицы с миграциями"), function () {
+        $this->tester->expectThrowable(new MigrationException('table-name-not-found'), function () {
             (new Config(['defaults' => ['environment' => 'testing']]))->getMigrationTable();
         });
     }
@@ -89,7 +89,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testGetPathFail()
     {
-        $this->tester->expectThrowable(new MigrationException("Не указан путь до каталога с миграциями"), function () {
+        $this->tester->expectThrowable(new MigrationException('migration-path-not-found'), function () {
             $config = ['defaults' => ['environment' => 'testing']];
             (new Config($config))->getPath();
         });
@@ -104,7 +104,7 @@ class ConfigTest extends \Codeception\Test\Unit
 
     public function testGetDriverFail()
     {
-        $this->tester->expectThrowable(new MigrationException("Не указан драйвер внутри 'testing' environment"), function(){
+        $this->tester->expectThrowable(new MigrationException('driver-not-found', ['testing']), function(){
             $config = ['defaults' => ['environment' => 'testing']];
             (new Config($config))->getDriver();
         });

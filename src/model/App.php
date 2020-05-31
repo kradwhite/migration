@@ -13,6 +13,8 @@ use kradwhite\db\Connection;
 use kradwhite\db\driver\Driver;
 use kradwhite\db\driver\DriverFactory;
 use kradwhite\db\exception\BeforeQueryException;
+use kradwhite\language\Lang;
+use kradwhite\language\LangException;
 
 /**
  * Class App
@@ -22,6 +24,9 @@ class App
 {
     /** @var array */
     private array $objects = [];
+
+    /** @var Lang */
+    private static ?Lang $lang = null;
 
     /**
      * App constructor.
@@ -63,6 +68,21 @@ class App
     }
 
     /**
+     * @return Lang
+     * @throws LangException
+     */
+    public static function lang(): Lang
+    {
+        if (!self::$lang) {
+            $configFilename = __DIR__ . '/../../language.php';
+            $rawLocale = (string)getenv('LANG');
+            $locale = substr($rawLocale, 0, 2);
+            self::$lang = Lang::init($configFilename, $locale);
+        }
+        return self::$lang;
+    }
+
+    /**
      * @return MigrationRepository
      * @throws MigrationException
      */
@@ -83,7 +103,7 @@ class App
         try {
             return DriverFactory::buildFromArray($this->config()->getEnvironment());
         } catch (BeforeQueryException $e) {
-            throw new MigrationException("Ошибка создания драйвера. " . $e->getMessage(), $e->getCode(), $e);
+            throw new MigrationException("driver-create-error", [$e->getMessage()], $e);
         }
     }
 
@@ -98,7 +118,7 @@ class App
             $filename = __DIR__ . '/../' . Config::Name;
         }
         if (!$config = yaml_parse_file($filename)) {
-            throw new MigrationException("Неверный формат данных в файле конфигурации '$filename'");
+            throw new MigrationException('config-file-wrong', [$filename]);
         }
         return new Config($config);
     }

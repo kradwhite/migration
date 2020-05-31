@@ -57,7 +57,7 @@ class MigrationRepositoryTest extends \Codeception\Test\Unit
         if (!file_exists("$pwd/migration.php")) {
             $this->tester->writeToFile('migration.php', '<?php');
         }
-        $this->tester->expectThrowable(new MigrationException("Миграция с именем '$pwd/migration.php' уже существует"), function () use ($pwd) {
+        $this->tester->expectThrowable(new MigrationException('migration-already-exist', ["$pwd/migration.php"]), function () use ($pwd) {
             $config = $this->make(Config::class, ['getPath' => "$pwd"]);
             (new MigrationRepository($this->tester->conn(), $config))->createFile('migration', '');
         });
@@ -70,7 +70,7 @@ class MigrationRepositoryTest extends \Codeception\Test\Unit
         if (file_exists("$pwd/migration.php")) {
             $this->tester->deleteFile('migration.php');
         }
-        $this->tester->expectThrowable(new MigrationException("Ошибка создания файла '$pwd/migration.php'"), function () use ($pwd) {
+        $this->tester->expectThrowable(new MigrationException('migration-file-create-error', ["$pwd/migration.php"]), function () use ($pwd) {
             $config = $this->make(Config::class, ['getPath' => "$pwd"]);
             (new MigrationRepository($this->tester->conn(), $config))->createFile('migration', '');
         });
@@ -99,7 +99,7 @@ class MigrationRepositoryTest extends \Codeception\Test\Unit
     public function testBuildMigrationFailClassNotFound()
     {
         $this->tester->amInPath('tests/_data');
-        $this->tester->expectThrowable(new MigrationException("Миграция 'not_extends_Migration' должна быть унаследована от 'kradwhite\migration\Migration::class"), function () {
+        $this->tester->expectThrowable(new MigrationException('migration-not-is-a-migration', ['not_extends_Migration']), function () {
             $pwd = getcwd();
             $config = $this->make(Config::class, ['getPath' => "$pwd"]);
             (new MigrationRepository($this->tester->conn(), $config))->buildMigration('not_extends_Migration');
@@ -118,7 +118,7 @@ class MigrationRepositoryTest extends \Codeception\Test\Unit
     public function testLoadMigrationNamesFromDirectoryNotFound()
     {
         $pwd = getcwd();
-        $this->tester->expectThrowable(new MigrationException("Каталог с миграциями '$pwd/wrong/path' не найден"), function () use ($pwd) {
+        $this->tester->expectThrowable(new MigrationException('migration-dir-not-found', ["$pwd/wrong/path"]), function () use ($pwd) {
             $config = $this->make(Config::class, ['getPath' => "$pwd/wrong/path"]);
             (new MigrationRepository($this->tester->conn(), $config))->loadMigrationNamesFromDirectory();
         });
@@ -128,7 +128,7 @@ class MigrationRepositoryTest extends \Codeception\Test\Unit
     {
         $this->tester->amInPath('tests/_data');
         $pwd = getcwd();
-        $this->tester->expectThrowable(new MigrationException("Файл с имененм '$pwd/not_directory.php' не является каталогом"), function () use ($pwd) {
+        $this->tester->expectThrowable(new MigrationException('migration-dir-not-dir', ["$pwd/not_directory.php"]), function () use ($pwd) {
             $config = $this->make(Config::class, ['getPath' => "$pwd/not_directory.php"]);
             (new MigrationRepository($this->tester->conn(), $config))->loadMigrationNamesFromDirectory();
         });

@@ -10,7 +10,7 @@ declare (strict_types=1);
 namespace kradwhite\migration\command;
 
 use kradwhite\db\exception\DbException;
-use kradwhite\db\exception\PdoException;
+use kradwhite\language\LangException;
 use kradwhite\migration\model\App;
 use kradwhite\migration\model\Config;
 use kradwhite\migration\model\MigrationException;
@@ -37,7 +37,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     {
         if (!$this->app) {
             if (!$target = $this->getConfigFileName($input)) {
-                $output->writeln('<fg=red>Ошика получения рабочего каталога. Возмножно нехватает доступа на чтение у одно из каталогов в цепочке.</>');
+                $output->writeln(App::lang()->phrase('messages', 'work-dir-wrong'));
             }
             $this->app = $target ? new App($target) : null;
         }
@@ -50,7 +50,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      */
     protected function getConfigFileName(InputInterface $input): string
     {
-        if (!$path = $input->getOption('path') ?? getcwd()) {
+        if (!$path = $input->getOption('path') ? $input->getOption('path') : getcwd()) {
             return '';
         } else if ($path[0] != DIRECTORY_SEPARATOR) {
             if (!$prefix = getcwd()) {
@@ -68,19 +68,17 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      * @param InputInterface $input
      * @param OutputInterface $output
      * @return void
-     * @throws MigrationException
-     * @throws PdoException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
             $this->doExecute($input, $output);
-            $output->writeln("<fg=green>Успешно выполнено</>");
-        } catch (MigrationException|DbException $e) {
+            $output->writeln(App::lang()->phrase('messages', 'success-execute'));
+        } catch (MigrationException|DbException|LangException $e) {
             if ($this->app && $this->app->connection()->inTransaction()) {
                 $this->app->connection()->rollback();
             }
-            $output->writeln("<fg=red>{$e->getMessage()}</>");
+            $output->writeln(App::lang()->phrase('messages', 'exception-message'));
         }
     }
 
@@ -90,9 +88,9 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     protected function configure()
     {
         $this->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
-            'Путь хранения файла конфигурации миграций')
+            App::lang()->phrase('messages', 'option-path-description'))
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
-                'Устанавливает environment с настройками базы данных');
+                App::lang()->phrase('messages', 'option-environment-description'));
     }
 
     /**

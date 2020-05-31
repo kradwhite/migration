@@ -9,6 +9,7 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\command;
 
+use kradwhite\migration\model\App;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,8 +29,8 @@ class ConfigCommand extends Command
     protected function configure(): void
     {
         parent::configure();
-        $this->setDescription('Создание файла конфигурации миграций')
-            ->setHelp('Создаёт файл конфигурации миграций');
+        $this->setDescription(App::lang()->phrase('messages', 'config-command-description'))
+            ->setHelp(App::lang()->phrase('messages', 'config-command-help'));
     }
 
     /**

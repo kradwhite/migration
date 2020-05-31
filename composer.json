@@ -22,6 +22,8 @@
         "ext-pdo": "*",
         "symfony/console": "^5.0",
         "kradwhite/db": "~0.5",
+        "kradwhite/config": "^0.2.3",
+        "kradwhite/language": "^0.16.1",
         "ext-yaml": "*"
     },
     "autoload": {

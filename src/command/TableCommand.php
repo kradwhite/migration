@@ -10,6 +10,7 @@ declare (strict_types=1);
 namespace kradwhite\migration\command;
 
 use kradwhite\db\exception\DbException;
+use kradwhite\migration\model\App;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -30,10 +31,11 @@ class TableCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription('Создание таблицы для хранения миграций')
-            ->setHelp('Создаёт таблицу для хранения миграций')
+        $messages = App::lang()->text('messages');
+        $this->setDescription($messages->phrase('table-command-description'))
+            ->setHelp($messages->phrase('table-command-help'))
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
-                'Устанавливает environment с настройками базы данных');
+                $messages->phrase('table-command-environment'));
     }
 
     /**

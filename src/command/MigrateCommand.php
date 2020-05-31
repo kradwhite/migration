@@ -9,6 +9,7 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\command;
 
+use kradwhite\migration\model\App;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -29,10 +30,11 @@ class MigrateCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription("Применение миграций")
-            ->setHelp('Запускает выполение миграций')
+        $messages = App::lang()->text('messages');
+        $this->setDescription($messages->phrase('migrate-command-description'))
+            ->setHelp($messages->phrase('migrate-command-help'))
             ->addOption('count', 'c', InputOption::VALUE_OPTIONAL,
-                'Колличество миграций, которые будут выполены');
+                $messages->phrase('migrate-command-count'));
     }
 
     /**

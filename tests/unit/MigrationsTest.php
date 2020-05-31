@@ -27,7 +27,11 @@ class MigrationsTest extends \Codeception\Test\Unit
     {
         $this->countExecutedMigrations = 0;
         $this->repo = $this->make(MigrationRepository::class, [
-            'loadMigrationNamesFromDirectory' => ['_2018_01_03__23_00_00__mig1', '_2019_01_03__23_00_00__mig2', '_2020_01_03__23_00_00__mig3'],
+            'loadMigrationNamesFromDirectory' => [
+                '_2018_01_03__23_00_00__mig1',
+                '_2019_01_03__23_00_00__mig2',
+                '_2020_01_03__23_00_00__mig3'
+            ],
             'begin' => null,
             'commit' => null,
             'buildMigration' => new class($this->make(Connection::class)) extends Migration {

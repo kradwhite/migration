@@ -1,20 +1,48 @@
+# %s
 paths:
+
+  # %s
   migrations: "migrations/"
 
+# %s
 defaults:
+
+  # %s
   table: migrations
+
+  # %s
   environment: testing
 
+# %s
 environments:
+
+  # %s
   testing:
+
+    # %s
     driver: pgsql
+
+    # %s
     host: localhost
+
+    # %s
     db: test
+
+    # %s
     user: admin
+
+    # %s
     pass: admin
+
+    # %s
     port: 5432
+
+    # %s
     charset: utf8
+
+    # %s
     # table: migrations
+
   production:
     driver: pgsql
     host: localhost

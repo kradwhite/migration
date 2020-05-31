@@ -32,7 +32,7 @@ class Config
     public function __construct(array $config)
     {
         if (!isset($config['defaults']['environment']) || !$config['defaults']['environment']) {
-            throw new MigrationException("Не указана environment");
+            throw new MigrationException('environment-not-found');
         }
         $environment = $config['defaults']['environment'];
         $this->config = $config;
@@ -45,11 +45,11 @@ class Config
      */
     public function create(): string
     {
-        $name = $this->getWorkPath() . DIRECTORY_SEPARATOR . self::Name;
+        $name = $this->getWorkPath() . self::Name;
         if (file_exists($name)) {
-            throw new MigrationException("Файл конфигурации '$name' уже существует");
+            throw new MigrationException('config-file-already-exist', [$name]);
         } else if (!yaml_emit_file($name, $this->config)) {
-            throw new MigrationException("Ошибка создания файла конфигурации '$name'");
+            throw new MigrationException('config-file-create-error', [$name]);
         }
         return $name;
     }
@@ -61,7 +61,7 @@ class Config
     public function getEnvironment(): array
     {
         if (!isset($this->config['environments'][$this->environment])) {
-            throw new MigrationException("Environment '{$this->environment}' не найден в конфиг файле");
+            throw new MigrationException('config-file-environment-not-found', [$this->environment]);
         }
         return $this->config['environments'][$this->environment];
     }
@@ -77,7 +77,7 @@ class Config
         } else if (isset($this->config['defaults']['table'])) {
             return $this->config['defaults']['table'];
         }
-        throw new MigrationException("Не указано имя таблицы с миграциями");
+        throw new MigrationException('table-name-not-found');
     }
 
     /**
@@ -87,12 +87,9 @@ class Config
     public function getPath(): string
     {
         if (!isset($this->config['paths']['migrations'])) {
-            throw new MigrationException("Не указан путь до каталога с миграциями");
+            throw new MigrationException('migration-path-not-found');
         }
         $path = $this->getWorkPath();
-        if ($path[strlen($path) - 1] != DIRECTORY_SEPARATOR) {
-            $path .= DIRECTORY_SEPARATOR;
-        }
         return $path . $this->config['paths']['migrations'];
     }
 
@@ -103,7 +100,7 @@ class Config
     public function getDriver(): string
     {
         if (!isset($this->config['environments'][$this->environment]['driver'])) {
-            throw new MigrationException("Не указан драйвер внутри '{$this->environment}' environment");
+            throw new MigrationException('driver-not-found', [$this->environment]);
         }
         return $this->config['environments'][$this->environment]['driver'];
     }
@@ -115,7 +112,10 @@ class Config
     private function getWorkPath(): string
     {
         if (!$path = getcwd()) {
-            throw new MigrationException("Ошика получения рабочего каталога. Возмножно нехватает доступа на чтение у одно из каталогов пути");
+            throw new MigrationException('work-dir-wrong');
+        }
+        if ($path[strlen($path) - 1] != DIRECTORY_SEPARATOR) {
+            $path .= DIRECTORY_SEPARATOR;
         }
         return $path;
     }

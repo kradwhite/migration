@@ -1,3 +1,5 @@
+#!/usr/bin/env php
+
 <?php
 /**
  * Date: 11.04.2020
@@ -5,9 +7,11 @@
  * Author: Artem Aleksandrov
  */
 
-declare (strict_types=1);
-
-require __DIR__ . '/../vendor/autoload.php';
+if (file_exists(__DIR__ . '/../../autoload.php')) {
+    require_once __DIR__ . '/../../autoload.php';
+} else {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 
 use kradwhite\migration\command\ConfigCommand;
 use kradwhite\migration\command\CreateCommand;

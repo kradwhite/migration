@@ -9,6 +9,7 @@ declare (strict_types=1);
 
 namespace kradwhite\migration\command;
 
+use kradwhite\migration\model\App;
 use kradwhite\migration\model\MigrationException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -28,9 +29,10 @@ class CreateCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription("Создание миграции")
-            ->setHelp('Создаёт миграцию')
-            ->addUsage('<fg=green>Имя миграции</>');
+        $messages = App::lang()->text('messages');
+        $this->setDescription($messages->phrase('create-command-description'))
+            ->setHelp($messages->phrase('create-command-help'))
+            ->addUsage($messages->phrase('create-command-usage'));
     }
 
     /**
