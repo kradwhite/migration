@@ -46,6 +46,7 @@ class RollbackCommand extends Command
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
         if ($app = $this->buildApp($input, $output)) {
+            $this->setChdir($input);
             $app->migrations()->rollback((int)$input->getOption('count'));
         }
         return (int)!$app;

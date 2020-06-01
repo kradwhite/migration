@@ -9,6 +9,7 @@ return [
     'config-file-environment-not-found' => "Environment '%s' не найден в конфиг файле",
     'table-name-not-found' => 'Не указано имя таблицы с миграциями',
     'migration-path-not-found' => 'Не указан путь до каталога с миграциями',
+    'migration-file-not-found' => "Файл '%s' с миграцией не найден",
     'driver-not-found' => "Не указан драйвер внутри '%s' environment",
     'work-dir-wrong' => 'Ошибка получения рабочего каталога. Возможно не хватает доступа на чтение у одно из каталогов пути',
     'migration-already-exist' => "Миграция с именем '%s' уже существует",

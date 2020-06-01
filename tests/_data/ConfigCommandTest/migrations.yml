@@ -19,20 +19,20 @@ environments:
   # Environment с именем testing
   testing:
 
-    # Драйвер базы данных. Доступны mysql,pgsql
+    # Драйвер базы данных. Доступны mysql, pgsql
     driver: pgsql
 
     # Host базы данных
     host: localhost
 
     # Имя базы данных
-    db: test
+    dbName: test
 
     # Имя пользователя базы данных
     user: admin
 
     # Пароль пользователя базы данных
-    pass: admin
+    password: admin
 
     # Порт базы данных
     port: 5432
@@ -46,9 +46,9 @@ environments:
   production:
     driver: pgsql
     host: localhost
-    db: prod
+    dbName: prod
     user: admin
-    pass: admin
+    password: admin
     port: 5432
     charset: utf8
     # table: migrations

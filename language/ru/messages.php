@@ -11,7 +11,7 @@ return [
     'config-command-help' => 'Создаёт файл конфигурации миграций',
     'create-command-description' => 'Создание миграции',
     'create-command-help' => 'Создаёт миграцию',
-    'create-command-usage' => '<fg=green>Имя миграции</>',
+    'create-command-name' => '<fg=green>Имя миграции</>',
     'migrate-command-description' => 'Применение миграций',
     'migrate-command-help' => 'Запускает выполение миграций',
     'migrate-command-count' => 'Количество миграций, которые будут выполнены',

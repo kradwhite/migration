@@ -63,6 +63,10 @@ class Config
         if (!isset($this->config['environments'][$this->environment])) {
             throw new MigrationException('config-file-environment-not-found', [$this->environment]);
         }
+        if (isset($this->config['environments'][$this->environment]['port'])) {
+            $this->config['environments'][$this->environment]['port']
+                = (string)$this->config['environments'][$this->environment]['port'];
+        }
         return $this->config['environments'][$this->environment];
     }
 
@@ -89,8 +93,11 @@ class Config
         if (!isset($this->config['paths']['migrations'])) {
             throw new MigrationException('migration-path-not-found');
         }
-        $path = $this->getWorkPath();
-        return $path . $this->config['paths']['migrations'];
+        $path = $this->getWorkPath() . $this->config['paths']['migrations'];
+        if ($path[strlen($path) - 1] != DIRECTORY_SEPARATOR) {
+            $path .= DIRECTORY_SEPARATOR;
+        }
+        return $path;
     }
 
     /**

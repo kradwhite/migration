@@ -92,7 +92,7 @@ class Migrations
             $migration = array_pop($this->migrations);
             $this->repository->begin();
             $this->repository->buildMigration($migration['name'])->down();
-            $this->repository->removeById($migration['id']);
+            $this->repository->removeById((int)$migration['id']);
             $this->repository->commit();
         }
     }

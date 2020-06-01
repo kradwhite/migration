@@ -91,7 +91,7 @@ class ConfigTest extends \Codeception\Test\Unit
     {
         $config = ['defaults' => ['environment' => 'testing'], 'paths' => ['migrations' => '_data']];
         $path = (new Config($config))->getPath();
-        $this->assertEquals($path, getcwd() . '/_data');
+        $this->assertEquals($path, getcwd() . '/_data/');
     }
 
     public function testGetDriverFail()

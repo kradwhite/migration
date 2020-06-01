@@ -9,6 +9,7 @@ return [
     'config-file-environment-not-found' => "Environment '%s' is not found in the config file",
     'table-name-not-found' => 'The name of the migration table was omitted',
     'migration-path-not-found' => 'The path to the migration folder was not specified',
+    'migration-file-not-found' => "File '%s' with migration not found",
     'driver-not-found' => "Driver not specified inside '%s' environment",
     'work-dir-wrong' => 'Error retrieving the working folder. One of the path directories may not have enough read access',
     'migration-already-exist' => "Migration named '%s' already exists",

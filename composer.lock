@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0370812b3fc20d40afaa350a721264fe",
+    "content-hash": "2c237d0b8ab13117fdccc8ce886a4200",
     "packages": [
         {
             "name": "kradwhite/config",

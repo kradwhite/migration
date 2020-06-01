@@ -28,6 +28,9 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
     /** @var App */
     private ?App $app = null;
 
+    /** @var string */
+    private string $oldChdir = '';
+
     /**
      * @param InputInterface $input
      * @param OutputInterface $output
@@ -51,9 +54,8 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      */
     protected function getConfigFileName(InputInterface $input): string
     {
-        if (!$path = $input->getOption('path')) {
-            return '';
-        } else if ($path[0] != DIRECTORY_SEPARATOR) {
+        $path = $input->getOption('path');
+        if ($path[0] != DIRECTORY_SEPARATOR) {
             if (!$prefix = getcwd()) {
                 return '';
             }
@@ -80,7 +82,11 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             if ($this->app && $this->app->connection()->inTransaction()) {
                 $this->app->connection()->rollback();
             }
-            $output->writeln(App::lang()->phrase('messages', 'exception-message'));
+            $output->writeln(App::lang()->phrase('messages', 'exception-message', [$e->getMessage()]));
+        } finally {
+            if ($this->oldChdir) {
+                chdir($this->oldChdir);
+            }
         }
         return 1;
     }
@@ -95,6 +101,19 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             $messages->phrase('option-path-description'), getcwd())
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
                 $messages->phrase('option-environment-description'));
+    }
+
+    /**
+     * @param InputInterface $input
+     */
+    protected function setChdir(InputInterface $input)
+    {
+        $path = $input->getOption('path');
+        $this->oldChdir = getcwd();
+        if ($path[0] != DIRECTORY_SEPARATOR) {
+            $path = $this->oldChdir . DIRECTORY_SEPARATOR . $path;
+        }
+        chdir($path);
     }
 
     /**

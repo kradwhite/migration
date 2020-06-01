@@ -26,13 +26,13 @@ environments:
     host: localhost
 
     # %s
-    db: test
+    dbName: test
 
     # %s
     user: admin
 
     # %s
-    pass: admin
+    password: admin
 
     # %s
     port: 5432
@@ -46,9 +46,9 @@ environments:
   production:
     driver: pgsql
     host: localhost
-    db: prod
+    dbName: prod
     user: admin
-    pass: admin
+    password: admin
     port: 5432
     charset: utf8
     # table: migrations

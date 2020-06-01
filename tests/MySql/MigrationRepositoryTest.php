@@ -140,7 +140,7 @@ class MigrationRepositoryTest extends \Codeception\Test\Unit
         $config = $this->make(Config::class, ['getPath' => getcwd()]);
         $result = (new MigrationRepository($this->tester->conn(), $config))->loadMigrationNamesFromDirectory();
         $this->assertCount(2, $result);
-        $this->assertEquals($result[0], '_2020_01_01__00_00_00__second_2');
+        $this->assertEquals($result[0], '_2020_01_02_00_00_00__second_2');
         $this->assertEquals($result[1], '_2019_01_01__00_00_00__first_1');
     }
 }

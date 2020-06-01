@@ -20,13 +20,13 @@ environments:
   testing:
 
     # Драйвер базы данных. Доступны mysql, pgsql
-    driver: pgsql
+    driver: mysql
 
     # Host базы данных
-    host: localhost
+    host: mysql
 
     # Имя базы данных
-    dbName: test
+    dbName: test-1
 
     # Имя пользователя базы данных
     user: admin
@@ -35,20 +35,10 @@ environments:
     password: admin
 
     # Порт базы данных
-    port: 5432
+    port: 3306
 
     # Настройки кодировки
     charset: utf8
 
     # Имя таблицы с миграциями в данной environment
-    # table: migrations
-
-  production:
-    driver: pgsql
-    host: localhost
-    dbName: prod
-    user: admin
-    password: admin
-    port: 5432
-    charset: utf8
-    # table: migrations
+    table: command-create

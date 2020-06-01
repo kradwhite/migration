@@ -19,7 +19,7 @@ use kradwhite\db\structure\Table;
 abstract class Migration
 {
     /** @var Connection */
-    private ?Connection $connection = null;
+    private ?Connection $connection;
 
     /**
      * Migration constructor.

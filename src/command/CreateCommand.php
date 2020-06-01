@@ -11,6 +11,7 @@ namespace kradwhite\migration\command;
 
 use kradwhite\migration\model\App;
 use kradwhite\migration\model\MigrationException;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -32,7 +33,7 @@ class CreateCommand extends Command
         $messages = App::lang()->text('messages');
         $this->setDescription($messages->phrase('create-command-description'))
             ->setHelp($messages->phrase('create-command-help'))
-            ->addUsage($messages->phrase('create-command-usage'));
+            ->addArgument('name', InputArgument::REQUIRED, $messages->phrase('create-command-name'));
     }
 
     /**
@@ -44,7 +45,8 @@ class CreateCommand extends Command
     protected function doExecute(InputInterface $input, OutputInterface $output)
     {
         if ($app = $this->buildApp($input, $output)) {
-            $name = $app->migrations()->createMigration((string)$input->getOption('name'));
+            $this->setChdir($input);
+            $name = $app->migrations()->createMigration((string)$input->getArgument('name'));
             $output->writeln($name);
         }
         return (int)!$app;

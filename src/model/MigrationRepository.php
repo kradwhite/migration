@@ -69,13 +69,15 @@ class MigrationRepository
      */
     public function loadMigrations(): Migrations
     {
-        $raw = $this->connection->selectMultiple($this->config->getMigrationTable(), [], [])
-            ->prepareExecute('assoc', ['name']);
         $attributes = [];
-        foreach ($raw as &$migration) {
-            $attributes[$migration['name']] = $migration;
+        if ($this->isTableExist()) {
+            $raw = $this->connection->selectMultiple($this->config->getMigrationTable(), [], [])
+                ->prepareExecute('assoc', ['name']);
+            foreach ($raw as &$migration) {
+                $attributes[$migration['name']] = $migration;
+            }
+            unset($attributes['init']);
         }
-        unset($attributes['init']);
         return new Migrations($attributes, $this);
     }
 
@@ -99,7 +101,7 @@ class MigrationRepository
      */
     public function createFile(string $className, string $content): string
     {
-        $fileName = $this->config->getPath() . "/$className.php";
+        $fileName = $this->config->getPath() . "$className.php";
         if (file_exists($fileName)) {
             throw new MigrationException('migration-already-exist', [$fileName]);
         } else if (!file_put_contents($fileName, $content)) {
@@ -129,7 +131,11 @@ class MigrationRepository
      */
     public function buildMigration(string $className): Migration
     {
-        require $this->config->getPath() . "/$className.php";
+        $filename = $this->config->getPath() . "$className.php";
+        if (!file_exists($filename)) {
+            throw new MigrationException('migration-file-not-found', [$filename]);
+        }
+        require $filename;
         if (!class_exists($className)) {
             throw new MigrationException('migration-class-not-found', [$className]);
         } else if (!is_a($className, Migration::class, true)) {
@@ -179,5 +185,16 @@ class MigrationRepository
         if ($this->connection->inTransaction()) {
             $this->connection->commit();
         }
+    }
+
+    /**
+     * @return bool
+     * @throws DbException
+     * @throws MigrationException
+     */
+    private function isTableExist(): bool
+    {
+        $tables = $this->connection->meta()->tables($this->config->getEnvironment()['dbName']);
+        return in_array($this->config->getMigrationTable(), $tables);
     }
 }

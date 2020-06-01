@@ -2,5 +2,12 @@ actor: CLITester
 modules:
   enabled:
     - \Helper\CLI
-    - Filesystem
     - Cli
+    - Db:
+        dsn: 'mysql:host=mysql;dbname=test-1;port=3306'
+        user: 'admin'
+        password: 'admin'
+        cleanup: true
+        populate: true
+        dump: 'tests/_data/my.sql'
+    - Filesystem

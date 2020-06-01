@@ -11,7 +11,7 @@ return [
     'config-command-help' => 'Creates a migration configuration file',
     'create-command-description' => 'Creating a migration',
     'create-command-help' => 'Creates a migration',
-    'create-command-usage' => '<fg=green>The name of the migration</>',
+    'create-command-name' => '<fg=green>The name of the migration</>',
     'migrate-command-description' => 'Applying migrations',
     'migrate-command-help' => 'Starts performing the migration',
     'migrate-command-count' => 'Number of migrations to be performed',
