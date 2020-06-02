@@ -3,11 +3,11 @@
 use kradwhite\migration\model\Migration;
 
 /**
- * Class _2020_06_02__02_49_32__NameOfMigration
+ * Class _2020_06_02__15_49_16__NameOfMigration
  * @method conn(): Connection
  * @method table(): Table
  */
-class _2020_06_02__02_49_32__NameOfMigration extends Migration
+class _2020_06_02__15_49_16__NameOfMigration extends Migration
 {
     
     /**

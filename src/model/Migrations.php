@@ -106,6 +106,30 @@ class Migrations
     }
 
     /**
+     * @return array
+     * @throws MigrationException
+     */
+    public function getNamesNewMigrations(): array
+    {
+        $namesFromDir = $this->repository->loadMigrationNamesFromDirectory();
+        $namesFromDb = array_column($this->migrations, 'name');
+        return array_diff($namesFromDir, $namesFromDb);
+    }
+
+    /**
+     * @param int $count
+     * @return array
+     */
+    public function getLastMigrationsNames(int $count): array
+    {
+        if (!$count) {
+            $count = 1;
+        }
+        $namesFromDb = array_column($this->migrations, 'name');
+        return array_slice($namesFromDb, count($namesFromDb) - $count);
+    }
+
+    /**
      * @param string $class
      * @return string
      */

@@ -47,7 +47,16 @@ class MigrateCommand extends Command
     {
         if ($app = $this->buildApp($input, $output)) {
             $this->setChdir($input);
-            $app->migrations()->migrate((int)$input->getOption('count'));
+            $messages = App::lang()->text('messages');
+            if ($names = $app->migrations()->getNamesNewMigrations()) {
+                $output->writeln($messages->phrase('migrate-title'));
+                $answer = $this->getAnswer($input, $output, $names, $messages);
+                if ($answer && in_array($answer[0], ['y', 'Y'])) {
+                    $app->migrations()->migrate((int)$input->getOption('count'));
+                }
+            } else {
+                $output->writeln(App::lang()->phrase('messages', 'not-exist-new-migrations'));
+            }
         }
         return (int)!$app;
     }

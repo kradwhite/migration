@@ -21,4 +21,10 @@ return [
     'table-command-description' => 'Создание таблицы для хранения миграций',
     'table-command-help' => 'Создаёт таблицу для хранения миграций',
     'table-command-environment' => 'Устанавливает environment с настройками базы данных',
+    'migrate-title' => 'Будут выполнены следующие миграции:',
+    'migrate-question' => 'Вы действительно хотите это сделать? (y,n)',
+    'not-exist-new-migrations' => 'Новые миграции не найдены',
+    'option-yes' => 'Выполнится без дополнительных вопросов',
+    'rollback-title' => 'Будут откачены следующие миграции:',
+    'not-exist-rollback-migrations' => 'Миграции для отката не найдены',
 ];

@@ -21,4 +21,10 @@ return [
     'table-command-description' => 'Creating a table for storing migrations',
     'table-command-help' => 'Creates a table for storing migrations',
     'table-command-environment' => 'Sets environment with database settings',
+    'migrate-title' => 'The following migrations will be performed:',
+    'migrate-question' => 'Do you really want to do this? (y, n)',
+    'not-exist-new-migrations' => 'No new migrations were found',
+    'option-yes' => 'It will be completed without additional questions',
+    'rollback-title' => 'The following migrations will be siphoned off:',
+    'not-exist-rollback-migrations' => 'Migrations for rollback were not found',
 ];

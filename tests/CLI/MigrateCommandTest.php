@@ -21,7 +21,7 @@ class MigrateCommandTest extends \Codeception\Test\Unit
     public function testExecute()
     {
         $before = $this->tester->grabNumRecords('command-migrate');
-        $this->tester->runShellCommand('php migration migrate -p tests/_data/MigrateCommandTest');
+        $this->tester->runShellCommand('php migration migrate -p tests/_data/MigrateCommandTest -y');
         $after = $this->tester->grabNumRecords('command-migrate');
         $this->assertEquals($before + 1, $after);
     }

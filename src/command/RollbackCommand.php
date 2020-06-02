@@ -47,7 +47,16 @@ class RollbackCommand extends Command
     {
         if ($app = $this->buildApp($input, $output)) {
             $this->setChdir($input);
-            $app->migrations()->rollback((int)$input->getOption('count'));
+            $messages = App::lang()->text('messages');
+            if ($names = $app->migrations()->getLastMigrationsNames((int)$input->getOption('count'))) {
+                $output->writeln($messages->phrase('rollback-title'));
+                $answer = $this->getAnswer($input, $output, $names, $messages);
+                if ($answer && in_array($answer[0], ['y', 'Y'])) {
+                    $app->migrations()->rollback((int)$input->getOption('count'));
+                }
+            } else {
+                $output->writeln(App::lang()->phrase('messages', 'not-exist-rollback-migrations'));
+            }
         }
         return (int)!$app;
     }

@@ -12,6 +12,7 @@ namespace kradwhite\migration\command;
 use kradwhite\config\ConfigException;
 use kradwhite\db\exception\DbException;
 use kradwhite\language\LangException;
+use kradwhite\language\text\Text;
 use kradwhite\migration\model\App;
 use kradwhite\migration\model\Config;
 use kradwhite\migration\model\MigrationException;
@@ -100,7 +101,9 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
         $this->addOption('path', 'p', InputOption::VALUE_OPTIONAL,
             $messages->phrase('option-path-description'), getcwd())
             ->addOption('environment', 'e', InputOption::VALUE_OPTIONAL,
-                $messages->phrase('option-environment-description'));
+                $messages->phrase('option-environment-description'))
+            ->addOption('yes', 'y', InputOption::VALUE_OPTIONAL,
+                $messages->phrase('option-yes'), 'no');
     }
 
     /**
@@ -114,6 +117,27 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             $path = $this->oldChdir . DIRECTORY_SEPARATOR . $path;
         }
         chdir($path);
+    }
+
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     * @param array $names
+     * @param Text $messages
+     * @return string
+     * @throws LangException
+     */
+    protected function getAnswer(InputInterface $input, OutputInterface $output, array $names, Text $messages): string
+    {
+        foreach ($names as &$name) {
+            $output->writeln($name);
+        }
+        $output->write($messages->phrase('migrate-question'));
+        $answer = $input->getOption('yes') ? '' : 'y';
+        while (!strlen($answer) || !in_array($answer[0], ['y', 'n', 'Y', 'N'])) {
+            $answer = fgets(STDIN);
+        }
+        return $answer;
     }
 
     /**

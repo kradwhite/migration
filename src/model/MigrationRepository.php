@@ -148,7 +148,7 @@ class MigrationRepository
      * @return array
      * @throws MigrationException
      */
-    public function loadMigrationNamesFromDirectory(): array
+        public function loadMigrationNamesFromDirectory(): array
     {
         $dirname = $this->config->getPath();
         if (!file_exists($dirname)) {
