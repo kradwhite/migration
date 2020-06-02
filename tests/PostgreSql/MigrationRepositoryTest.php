@@ -34,7 +34,7 @@ class MigrationRepositoryTest extends \Codeception\Test\Unit
 
     public function testLoadMigrations()
     {
-        $config = $this->make(Config::class, ['getMigrationTable' => 'migrations-load']);
+        $config = $this->make(Config::class, ['getMigrationTable' => 'migrations-load', 'getEnvironment' => ['dbName' => 'test-2']]);
         $migrations = (new MigrationRepository($this->tester->conn(), $config))->loadMigrations();
         $this->assertInstanceOf(Migrations::class, $migrations);
         $this->assertEquals($migrations->count(), 2);
